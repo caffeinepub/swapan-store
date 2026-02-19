@@ -1,16 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Add checkout flow with address and phone number collection, and display orders in admin dashboard.
+**Goal:** Fix the cart removal functionality so users can successfully remove items from their shopping cart.
 
 **Planned changes:**
-- Create Order data type in backend to store customer phone, address, items, total, timestamp, and Principal
-- Implement backend function to create orders from cart items and clear cart after placement
-- Add backend query to retrieve all orders for admin
-- Create checkout page at /checkout with phone and address input fields
-- Display order confirmation message "Your order will be delivered today!" after successful checkout
-- Add "Proceed to Checkout" button to cart page
-- Add Orders section to admin dashboard showing all customer orders with details
-- Create React Query hooks for placing orders and fetching orders
+- Debug and fix the backend removeFromCart function to properly remove products from the user's cart
+- Fix the useRemoveFromCart React Query mutation hook to correctly call the backend and invalidate the cart cache
+- Ensure the Remove button in CartPage properly triggers the mutation with the correct product ID
 
-**User-visible outcome:** Customers can proceed from cart to checkout, enter their phone number and delivery address, place orders, and see a delivery confirmation. Admins can view all customer orders with full details in the dashboard.
+**User-visible outcome:** Users can click the Remove button on cart items and see them immediately removed from their cart, with proper loading states and success feedback.

@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Loader2, Edit2, Check, X, LogOut, Package } from 'lucide-react';
+import { Loader2, Edit2, Check, X, LogOut, Package, Plus, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,6 +17,8 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import { formatPrice } from '../utils/formatPrice';
 import type { Product } from '../backend';
 import { toast } from 'sonner';
+import { AddProductModal } from '../components/AddProductModal';
+import { EditProductModal } from '../components/EditProductModal';
 
 export default function AdminDashboard() {
   const { isAuthenticated, logout } = useAdminAuth();
@@ -26,6 +28,9 @@ export default function AdminDashboard() {
   const updatePrice = useUpdateProductPrice();
   const [editingProductId, setEditingProductId] = useState<bigint | null>(null);
   const [editPrice, setEditPrice] = useState<string>('');
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Check authentication on mount
   useEffect(() => {
@@ -107,6 +112,11 @@ export default function AdminDashboard() {
     navigate({ to: '/admin/login' });
   };
 
+  const handleEditProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setEditModalOpen(true);
+  };
+
   const formatTimestamp = (timestamp: bigint) => {
     const date = new Date(Number(timestamp) / 1000000); // Convert nanoseconds to milliseconds
     return date.toLocaleString('en-IN', {
@@ -156,7 +166,13 @@ export default function AdminDashboard() {
         {/* Product Management */}
         <Card>
           <CardHeader>
-            <CardTitle>Product Management</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Product Management</CardTitle>
+              <Button onClick={() => setAddModalOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Product
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -229,14 +245,26 @@ export default function AdminDashboard() {
                             </Button>
                           </div>
                         ) : (
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8"
-                            onClick={() => handleEditClick(product)}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() => handleEditProduct(product)}
+                              title="Edit product"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() => handleEditClick(product)}
+                              title="Quick edit price"
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         )}
                       </TableCell>
                     </TableRow>
@@ -305,6 +333,14 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modals */}
+      <AddProductModal open={addModalOpen} onOpenChange={setAddModalOpen} />
+      <EditProductModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        product={selectedProduct}
+      />
     </div>
   );
 }

@@ -1,200 +1,75 @@
 {
   "kind": "build_request",
-  "title": "Add checkout with address collection and order management",
+  "title": "Fix cart removal functionality",
   "projectName": "Swapan Store",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-18",
-      "text": "Create an Order data type in the backend that stores customer phone number, delivery address, order items (product IDs and quantities), total price, order timestamp, and caller Principal",
+      "id": "REQ-39",
+      "text": "Debug and fix the removeFromCart backend function to ensure it properly removes products from the user's cart when called with a valid productId",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-no-it-is-not-working"
         ],
         "quotes": [
-          "take address and phone no of consumer"
+          "no it is not working"
         ]
       },
       "acceptanceCriteria": [
-        "Order type includes phone number field as Text",
-        "Order type includes address field as Text",
-        "Order type includes array of order items with product references and quantities",
-        "Order type includes total price as Float",
-        "Order type includes timestamp of order creation",
-        "Order type includes customer Principal identifier"
+        "The removeFromCart function successfully removes the specified product from the caller's cart",
+        "The cart data persists correctly after removal",
+        "The function handles edge cases (non-existent products, empty carts) gracefully"
       ]
     },
     {
-      "id": "REQ-19",
-      "text": "Implement a backend function to create and store orders that accepts phone number, address, and cart items, calculates total price, and persists the order with caller Principal and current timestamp",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "at the time of checkout take address and phone no"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Function accepts phone number as Text parameter",
-        "Function accepts delivery address as Text parameter",
-        "Function retrieves cart items for the current caller",
-        "Function calculates total order price from cart items",
-        "Function creates Order record with all required fields",
-        "Function stores order in persistent backend storage",
-        "Function clears the customer's cart after successful order creation"
-      ]
-    },
-    {
-      "id": "REQ-20",
-      "text": "Add a backend query function to retrieve all orders for the admin dashboard that returns array of orders with customer details, items, and totals",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "display in admin dashboard"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Function returns all stored orders as an array",
-        "Each order includes phone number and address",
-        "Each order includes list of products and quantities",
-        "Each order includes total price in Float format",
-        "Each order includes timestamp information"
-      ]
-    },
-    {
-      "id": "REQ-21",
-      "text": "Create a checkout page component at /checkout route that displays cart summary, input fields for phone number and delivery address, order total in Indian Rupees, and a 'Place Order' button",
+      "id": "REQ-40",
+      "text": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-no-it-is-not-working"
         ],
         "quotes": [
-          "at the time of checkout take address and phone no of consumer"
+          "no it is not working"
         ]
       },
       "acceptanceCriteria": [
-        "Page displays complete cart items with quantities and prices",
-        "Page includes text input field for phone number with appropriate validation",
-        "Page includes textarea for delivery address",
-        "Page displays calculated order total in ₹ format",
-        "Page includes 'Place Order' button that submits the order",
-        "Page maintains Swapan Store design theme with warm Indian spice market colors"
+        "The mutation hook calls the backend removeFromCart function with the correct productId",
+        "On successful removal, the cart query is invalidated and refetched",
+        "Error states are handled and displayed to the user",
+        "The UI updates immediately to reflect the removed item"
       ]
     },
     {
-      "id": "REQ-22",
-      "text": "Implement checkout flow that calls the backend order creation function with phone number and address, clears the cart on success, and displays confirmation message 'Your order will be delivered today!'",
+      "id": "REQ-41",
+      "text": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-no-it-is-not-working"
         ],
         "quotes": [
-          "show the consumer massage that product will be delivered today"
+          "no it is not working"
         ]
       },
       "acceptanceCriteria": [
-        "Place Order button triggers backend order creation with phone and address",
-        "Success response displays confirmation message 'Your order will be delivered today!'",
-        "Cart is emptied after successful order placement",
-        "User receives visual feedback (toast or modal) with the delivery confirmation",
-        "Error states are handled with appropriate user feedback"
-      ]
-    },
-    {
-      "id": "REQ-23",
-      "text": "Add 'Proceed to Checkout' button to the cart page that navigates to /checkout route when cart has items",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Button appears on cart page below cart items and total",
-        "Button is only enabled when cart contains at least one item",
-        "Button navigates to /checkout route when clicked",
-        "Button styling matches existing Swapan Store theme"
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "text": "Add an Orders section to the admin dashboard that displays all customer orders in a table with columns for order date/time, customer phone number, delivery address, items ordered, and total price in Indian Rupees",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "display in admin dashboard"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Orders section appears on admin dashboard page",
-        "Table displays order timestamp in readable format",
-        "Table shows customer phone number for each order",
-        "Table shows full delivery address for each order",
-        "Table lists all items with quantities for each order",
-        "Table displays total order price in ₹ format",
-        "Table is styled consistently with existing admin dashboard design",
-        "Orders are sorted by most recent first"
-      ]
-    },
-    {
-      "id": "REQ-25",
-      "text": "Create a React Query hook for placing orders that calls the backend order creation function and invalidates cart queries on success",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Hook uses useMutation from React Query",
-        "Mutation calls backend order creation function with phone and address parameters",
-        "Successful mutation invalidates cart query to reflect empty cart",
-        "Hook provides loading, error, and success states to consuming components"
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "text": "Create a React Query hook for fetching all orders in the admin dashboard that calls the backend orders query function",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Hook uses useQuery from React Query",
-        "Hook calls backend function to retrieve all orders",
-        "Hook provides loading, error, and data states",
-        "Query is enabled only when user is authenticated as admin"
+        "Clicking the Remove button calls the mutation with the correct productId",
+        "The button shows loading state during the mutation",
+        "Success feedback is provided to the user (toast notification or visual confirmation)",
+        "The cart updates to remove the item from the display"
       ]
     }
   ],
   "constraints": [
-    "Maintain single-actor backend architecture in backend/main.mo",
-    "Do not modify immutable frontend paths (hooks/useInternetIdentity.ts, hooks/useActor.ts, main.tsx, components/ui)",
-    "Use existing cart management system and clear cart after successful order",
-    "All prices must be displayed in Indian Rupees (₹) format using existing formatPrice utility",
-    "Checkout and order display must follow existing Swapan Store warm Indian spice market design theme"
+    "Do not modify the existing backend cart data structure",
+    "Maintain the existing useActor pattern for backend calls",
+    "Preserve the current cart query invalidation strategy"
   ],
   "nonGoals": [
-    "Payment processing integration",
-    "Email notifications to customers",
-    "Order status tracking or updates",
-    "Delivery date selection (fixed to 'today' message)",
-    "Order cancellation or modification features",
-    "Customer order history page",
-    "SMS notifications for order confirmation"
+    "Adding undo functionality for removed items",
+    "Implementing batch removal of multiple items",
+    "Changing the visual design of the Remove button"
   ],
   "imageRequirements": {
     "required": [],

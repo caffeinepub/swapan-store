@@ -1,126 +1,39 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add checkout with address collection and order management",
+  "title": "Fix cart removal functionality",
   "requirements": [
     {
-      "id": "REQ-21",
-      "summary": "Create checkout page with cart summary, contact info inputs, and order placement button",
+      "id": "REQ-40",
+      "summary": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
       "acceptanceCriteria": [
-        "Page displays complete cart items with quantities and prices",
-        "Page includes text input field for phone number with appropriate validation",
-        "Page includes textarea for delivery address",
-        "Page displays calculated order total in ₹ format",
-        "Page includes 'Place Order' button that submits the order",
-        "Page maintains Swapan Store design theme with warm Indian spice market colors"
+        "The mutation hook calls the backend removeFromCart function with the correct productId",
+        "On successful removal, the cart query is invalidated and refetched",
+        "Error states are handled and displayed to the user",
+        "The UI updates immediately to reflect the removed item"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/CheckoutPage.tsx",
-          "operation": "create",
-          "description": "Create checkout page component that displays cart summary with product names, quantities, and prices, input fields for phone number (with validation) and delivery address (textarea), calculates and displays order total using formatPrice utility, and includes a 'Place Order' button. Use existing Swapan Store warm color theme with earthy tones. Display cart items with images mapped from local generated assets using the same pattern as ProductsPage.tsx."
-        }
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "summary": "Implement checkout flow with backend order creation, cart clearing, and delivery confirmation message",
-      "acceptanceCriteria": [
-        "Place Order button triggers backend order creation with phone and address",
-        "Success response displays confirmation message 'Your order will be delivered today!'",
-        "Cart is emptied after successful order placement",
-        "User receives visual feedback (toast or modal) with the delivery confirmation",
-        "Error states are handled with appropriate user feedback"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/CheckoutPage.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add form submission handler that validates phone number and address inputs, calls the placeOrder mutation hook with form data, displays success toast with message 'Your order will be delivered today!' on successful order creation, and handles error states with appropriate user feedback using toast notifications. Navigate to products page after successful order placement."
+          "description": "Review and fix the useRemoveFromCart mutation hook to ensure it properly calls backend.removeFromCart with the productId parameter, includes proper error handling with toast notifications, and invalidates the cart query on success to trigger an immediate refetch of cart data"
         }
       ]
     },
     {
-      "id": "REQ-23",
-      "summary": "Add 'Proceed to Checkout' button to cart page that navigates to checkout route",
+      "id": "REQ-41",
+      "summary": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
       "acceptanceCriteria": [
-        "Button appears on cart page below cart items and total",
-        "Button is only enabled when cart contains at least one item",
-        "Button navigates to /checkout route when clicked",
-        "Button styling matches existing Swapan Store theme"
+        "Clicking the Remove button calls the mutation with the correct productId",
+        "The button shows loading state during the mutation",
+        "Success feedback is provided to the user (toast notification or visual confirmation)",
+        "The cart updates to remove the item from the display"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/CartPage.tsx",
           "operation": "modify",
-          "description": "Add 'Proceed to Checkout' button below the cart total section that navigates to /checkout route using TanStack Router Link component. Button should be disabled when cart is empty (cartItems.length === 0) and styled to match existing Swapan Store theme with warm earthy colors. Position button prominently after total price display."
-        }
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "summary": "Add Orders section to admin dashboard displaying all customer orders in a table",
-      "acceptanceCriteria": [
-        "Orders section appears on admin dashboard page",
-        "Table displays order timestamp in readable format",
-        "Table shows customer phone number for each order",
-        "Table shows full delivery address for each order",
-        "Table lists all items with quantities for each order",
-        "Table displays total order price in ₹ format",
-        "Table is styled consistently with existing admin dashboard design",
-        "Orders are sorted by most recent first"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/AdminDashboard.tsx",
-          "operation": "modify",
-          "description": "Add Orders section below the existing products table. Create a table displaying all orders fetched via the useOrders hook. Include columns for order timestamp (formatted as readable date/time), customer phone number, delivery address, items ordered (display as comma-separated list with product names and quantities), and total price in ₹ format using formatPrice utility. Sort orders by timestamp descending (most recent first). Style table consistently with existing product table design using similar card and table structure."
-        }
-      ]
-    },
-    {
-      "id": "REQ-25",
-      "summary": "Create React Query hook for placing orders with cart invalidation on success",
-      "acceptanceCriteria": [
-        "Hook uses useMutation from React Query",
-        "Mutation calls backend order creation function with phone and address parameters",
-        "Successful mutation invalidates cart query to reflect empty cart",
-        "Hook provides loading, error, and success states to consuming components"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add usePlaceOrder mutation hook that calls actor.createOrder with phone number, address, and cart items. Use useMutation from @tanstack/react-query. On successful mutation, invalidate the 'cart' query key to trigger cart refetch and reflect empty cart state. Hook should provide isLoading, isError, isSuccess states and error object to consuming components. Include useCartQuery call to get current cart items for passing to createOrder."
-        }
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "summary": "Create React Query hook for fetching all orders in admin dashboard",
-      "acceptanceCriteria": [
-        "Hook uses useQuery from React Query",
-        "Hook calls backend function to retrieve all orders",
-        "Hook provides loading, error, and data states",
-        "Query is enabled only when user is authenticated as admin"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add useOrders query hook that calls actor.getAllOrders backend method. Use useQuery from @tanstack/react-query with query key ['orders']. Enable query only when admin is authenticated by checking useAdminAuth().isAuthenticated. Hook should return data (array of Order objects), isLoading, and isError states for consuming components."
-        }
-      ]
-    },
-    {
-      "id": "REQ-21",
-      "summary": "Wire checkout page into app router configuration",
-      "acceptanceCriteria": [],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add /checkout route to the TanStack Router configuration that renders the CheckoutPage component. Position route after the /cart route in the routes array. Import CheckoutPage at the top of the file."
+          "description": "Review and fix the Remove button click handler to ensure it calls removeFromCart.mutate with the correct product.id, displays loading state on the button during mutation execution, shows success feedback via toast notification, and ensures the cart display updates immediately after successful removal"
         }
       ]
     }

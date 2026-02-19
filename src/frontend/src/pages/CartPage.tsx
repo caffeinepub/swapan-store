@@ -1,15 +1,18 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { Loader2, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Loader2, ShoppingBag, ArrowLeft, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useGetCartContents } from '../hooks/useQueries';
+import { useGetCartContents, useRemoveFromCart } from '../hooks/useQueries';
 import { formatPrice } from '../utils/formatPrice';
+import { toast } from 'sonner';
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { data: cartItems = [], isLoading } = useGetCartContents();
+  const removeFromCart = useRemoveFromCart();
+  const [removingProductId, setRemovingProductId] = useState<bigint | null>(null);
 
   // Map backend image URLs to local generated assets
   const cartItemsWithLocalImages = useMemo(() => {
@@ -47,6 +50,19 @@ export default function CartPage() {
   const totalItems = useMemo(() => {
     return cartItemsWithLocalImages.reduce((sum, { quantity }) => sum + Number(quantity), 0);
   }, [cartItemsWithLocalImages]);
+
+  const handleRemoveFromCart = async (productId: bigint, productName: string) => {
+    setRemovingProductId(productId);
+    try {
+      await removeFromCart.mutateAsync(productId);
+      toast.success(`${productName} removed from cart`);
+    } catch (error) {
+      toast.error('Failed to remove product from cart');
+      console.error('Error removing product from cart:', error);
+    } finally {
+      setRemovingProductId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -115,6 +131,21 @@ export default function CartPage() {
                         {formatPrice(product.price * Number(quantity))}
                       </p>
                     </div>
+                  </div>
+                  <div className="flex items-center">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveFromCart(product.id, product.name)}
+                      disabled={removingProductId === product.id}
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      {removingProductId === product.id ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-5 w-5" />
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

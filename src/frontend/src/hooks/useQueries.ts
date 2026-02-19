@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { useAdminAuth } from './useAdminAuth';
 import type { Product, ProductId, Quantity, Order } from '../backend';
+import { toast } from 'sonner';
 
 // Query to fetch all products
 export function useGetAllProducts() {
@@ -43,6 +44,26 @@ export function useAddToCart() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+  });
+}
+
+// Mutation to remove product from cart
+export function useRemoveFromCart() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (productId: ProductId) => {
+      if (!actor) throw new Error('Actor not initialized');
+      await actor.removeFromCart(productId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (error) => {
+      console.error('Error removing from cart:', error);
+      toast.error('Failed to remove item from cart');
     },
   });
 }
@@ -109,5 +130,70 @@ export function useOrders() {
       return actor.getAllOrders();
     },
     enabled: !!actor && !isFetching && isAuthenticated,
+  });
+}
+
+// Mutation to create a new product
+export function useCreateProduct() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      name,
+      description,
+      price,
+      category,
+      imageUrl,
+    }: {
+      name: string;
+      description: string;
+      price: number;
+      category: string;
+      imageUrl: string;
+    }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      return actor.createProduct(name, description, price, category, imageUrl);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+}
+
+// Mutation to update a product
+export function useUpdateProduct() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      productId,
+      name,
+      description,
+      price,
+      category,
+      imageUrl,
+    }: {
+      productId: ProductId;
+      name?: string;
+      description?: string;
+      price?: number;
+      category?: string;
+      imageUrl?: string;
+    }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      await actor.updateProduct(
+        productId,
+        name ?? null,
+        description ?? null,
+        price ?? null,
+        category ?? null,
+        imageUrl ?? null
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
   });
 }

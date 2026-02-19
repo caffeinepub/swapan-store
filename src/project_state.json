@@ -1,10 +1,12 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
+  "projectStateVersion": 17,
   "summary": "E-commerce app for Swapan Store selling Indian masalas, groceries, and food oils",
   "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Cart removal feature not working in Version 7"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-a-product-listing-page-that-displays-all-available-products-organized-by-categories-masalas-groceries-food-oils-with-product-images-names-prices-and-add-to-cart-buttons",
@@ -149,6 +151,78 @@
         "REQ-26"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-create-an-add-product-button-in-the-admin-dashboard-that-opens-a-form-modal-with-input-fields-for-product-name-description-price-category-dropdown-masalas-groceries-food-oils-and-image-url",
+      "title": "Create an 'Add Product' button in the admin dashboard that opens a form modal with input fields for product name, description, price, category dropdown (masalas, groceries, food oils), and image URL",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-add-product-form-submission-that-calls-the-backend-create-product-function-with-the-form-data-displays-success-toast-notification-on-success-refreshes-the-product-list-and-closes-the-modal",
+      "title": "Implement the Add Product form submission that calls the backend create product function with the form data, displays success toast notification on success, refreshes the product list, and closes the modal",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-edit-button-to-each-product-row-in-the-admin-dashboard-that-opens-a-form-modal-pre-populated-with-the-current-product-name-description-price-category-and-image-url",
+      "title": "Add an 'Edit' button to each product row in the admin dashboard that opens a form modal pre-populated with the current product name, description, price, category, and image URL",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-edit-product-form-submission-that-calls-the-backend-update-product-function-with-the-modified-fields-displays-success-toast-notification-on-success-refreshes-the-product-list-and-closes-the-modal",
+      "title": "Implement the Edit Product form submission that calls the backend update product function with the modified fields, displays success toast notification on success, refreshes the product list, and closes the modal",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-react-query-hooks-for-creating-and-updating-products-that-call-the-respective-backend-functions-and-invalidate-the-products-query-cache-on-success",
+      "title": "Create React Query hooks for creating and updating products that call the respective backend functions and invalidate the products query cache on success",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-remove-or-delete-button-to-each-product-item-in-the-cart-page-that-allows-consumers-to-completely-remove-that-product-from-their-shopping-cart",
+      "title": "Add a 'Remove' or delete button to each product item in the cart page that allows consumers to completely remove that product from their shopping cart",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-react-query-mutation-hook-that-calls-the-backend-removefromcart-function-to-delete-a-product-from-the-user-s-cart-and-invalidates-the-cart-query-on-success",
+      "title": "Create a React Query mutation hook that calls the backend removeFromCart function to delete a product from the user's cart and invalidates the cart query on success",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-and-fix-the-useremovefromcart-react-query-mutation-hook-to-ensure-it-correctly-calls-the-backend-removefromcart-function-and-properly-invalidates-the-cart-query-cache-on-success",
+      "title": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-remove-button-in-cartpage-properly-triggers-the-removefromcart-mutation-with-the-correct-product-id-when-clicked",
+      "title": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -249,6 +323,78 @@
       "summary": "Add a backend query function to retrieve all orders for the admin dashboard that returns array of orders with customer details, items, and totals",
       "reqIds": [
         "REQ-20"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Add ability to create new products in the admin dashboard",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Add ability to edit product images and names in the admin dashboard",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Add a backend function to create new products that accepts name, description, price, category, and image URL, validates the input, assigns a unique product ID, and adds the product to the catalog",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Add a backend function to update product details that accepts a product ID, and optional new values for name, description, price, category, and image URL, validates the input, and updates the product in the catalog",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Automatically delete orders from dashboard that are older than 2 days (48 hours)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Add a backend function that automatically deletes orders older than 48 hours (2 days) from the orders storage when queried",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Integrate the automatic order deletion into the existing getAllOrders query function so orders older than 2 days are removed before returning results to the admin dashboard",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Add ability for consumers to remove individual products from the shopping cart",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Add a backend function removeFromCart that accepts a productId parameter and removes that product entry from the caller's shopping cart",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Debug and fix the removeFromCart backend function to ensure it properly removes products from the user's cart when called with a valid productId",
+      "reqIds": [
+        "REQ-39"
       ],
       "status": "pending"
     }

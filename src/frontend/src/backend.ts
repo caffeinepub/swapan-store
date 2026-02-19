@@ -89,6 +89,21 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface Product {
+    id: ProductId;
+    name: string;
+    description: string;
+    imageUrl: string;
+    category: string;
+    price: number;
+}
+export interface ProductInput {
+    name: string;
+    description: string;
+    imageUrl: string;
+    category: string;
+    price: number;
+}
 export type ProductId = bigint;
 export interface Order {
     customerPrincipal: Principal;
@@ -98,27 +113,43 @@ export interface Order {
     phoneNumber: string;
     totalPrice: number;
 }
-export interface Product {
-    id: ProductId;
-    name: string;
-    description: string;
-    imageUrl: string;
-    category: string;
-    price: number;
-}
+export type Update = string | null;
 export type Quantity = bigint;
 export interface backendInterface {
+    addProductDirectly(product: Product): Promise<void>;
     addToCart(productId: ProductId, quantity: Quantity): Promise<void>;
+    createMultipleProducts(productsInput: Array<ProductInput>): Promise<void>;
     createOrder(phoneNumber: string, address: string, items: Array<[Product, Quantity]>): Promise<void>;
+    createProduct(name: string, description: string, price: number, category: string, imageUrl: string): Promise<ProductId>;
+    deleteProduct(productId: ProductId): Promise<void>;
     getAllOrders(): Promise<Array<Order>>;
     getAllProducts(): Promise<Array<Product>>;
     getCartContents(): Promise<Array<[Product, Quantity]>>;
+    getNextProductId(): Promise<ProductId>;
     getProduct(productId: ProductId): Promise<Product>;
+    incrementNextProductId(incrementBy: bigint): Promise<void>;
+    removeFromCart(productId: ProductId): Promise<void>;
+    updateProduct(productId: ProductId, name: Update, description: Update, price: number | null, category: Update, imageUrl: Update): Promise<void>;
     updateProductPrice(productId: ProductId, newPrice: number): Promise<void>;
     verifyAdminPassword(password: string): Promise<boolean>;
 }
+import type { Update as _Update } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async addProductDirectly(arg0: Product): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addProductDirectly(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addProductDirectly(arg0);
+            return result;
+        }
+    }
     async addToCart(arg0: ProductId, arg1: Quantity): Promise<void> {
         if (this.processError) {
             try {
@@ -133,6 +164,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createMultipleProducts(arg0: Array<ProductInput>): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createMultipleProducts(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createMultipleProducts(arg0);
+            return result;
+        }
+    }
     async createOrder(arg0: string, arg1: string, arg2: Array<[Product, Quantity]>): Promise<void> {
         if (this.processError) {
             try {
@@ -144,6 +189,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createOrder(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async createProduct(arg0: string, arg1: string, arg2: number, arg3: string, arg4: string): Promise<ProductId> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createProduct(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createProduct(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
+    async deleteProduct(arg0: ProductId): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteProduct(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteProduct(arg0);
             return result;
         }
     }
@@ -189,6 +262,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getNextProductId(): Promise<ProductId> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getNextProductId();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getNextProductId();
+            return result;
+        }
+    }
     async getProduct(arg0: ProductId): Promise<Product> {
         if (this.processError) {
             try {
@@ -200,6 +287,48 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getProduct(arg0);
+            return result;
+        }
+    }
+    async incrementNextProductId(arg0: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.incrementNextProductId(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.incrementNextProductId(arg0);
+            return result;
+        }
+    }
+    async removeFromCart(arg0: ProductId): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removeFromCart(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removeFromCart(arg0);
+            return result;
+        }
+    }
+    async updateProduct(arg0: ProductId, arg1: Update, arg2: Update, arg3: number | null, arg4: Update, arg5: Update): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateProduct(arg0, to_candid_Update_n1(this._uploadFile, this._downloadFile, arg1), to_candid_Update_n1(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n3(this._uploadFile, this._downloadFile, arg3), to_candid_Update_n1(this._uploadFile, this._downloadFile, arg4), to_candid_Update_n1(this._uploadFile, this._downloadFile, arg5));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateProduct(arg0, to_candid_Update_n1(this._uploadFile, this._downloadFile, arg1), to_candid_Update_n1(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n3(this._uploadFile, this._downloadFile, arg3), to_candid_Update_n1(this._uploadFile, this._downloadFile, arg4), to_candid_Update_n1(this._uploadFile, this._downloadFile, arg5));
             return result;
         }
     }
@@ -231,6 +360,15 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+}
+function to_candid_Update_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Update): _Update {
+    return to_candid_opt_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_opt_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
+    return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: number | null): [] | [number] {
+    return value === null ? candid_none() : candid_some(value);
 }
 export interface CreateActorOptions {
     agent?: Agent;

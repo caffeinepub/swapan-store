@@ -27,17 +27,39 @@ export interface Product {
   'price' : number,
 }
 export type ProductId = bigint;
+export interface ProductInput {
+  'name' : string,
+  'description' : string,
+  'imageUrl' : string,
+  'category' : string,
+  'price' : number,
+}
 export type Quantity = bigint;
+export type Update = [] | [string];
 export interface _SERVICE {
+  'addProductDirectly' : ActorMethod<[Product], undefined>,
   'addToCart' : ActorMethod<[ProductId, Quantity], undefined>,
+  'createMultipleProducts' : ActorMethod<[Array<ProductInput>], undefined>,
   'createOrder' : ActorMethod<
     [string, string, Array<[Product, Quantity]>],
     undefined
   >,
+  'createProduct' : ActorMethod<
+    [string, string, number, string, string],
+    ProductId
+  >,
+  'deleteProduct' : ActorMethod<[ProductId], undefined>,
   'getAllOrders' : ActorMethod<[], Array<Order>>,
   'getAllProducts' : ActorMethod<[], Array<Product>>,
   'getCartContents' : ActorMethod<[], Array<[Product, Quantity]>>,
+  'getNextProductId' : ActorMethod<[], ProductId>,
   'getProduct' : ActorMethod<[ProductId], Product>,
+  'incrementNextProductId' : ActorMethod<[bigint], undefined>,
+  'removeFromCart' : ActorMethod<[ProductId], undefined>,
+  'updateProduct' : ActorMethod<
+    [ProductId, Update, Update, [] | [number], Update, Update],
+    undefined
+  >,
   'updateProductPrice' : ActorMethod<[ProductId, number], undefined>,
   'verifyAdminPassword' : ActorMethod<[string], boolean>,
 }

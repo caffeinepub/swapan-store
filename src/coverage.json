@@ -1,120 +1,54 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T21:42:42.063Z",
+  "generatedAt": "2026-02-19T22:40:31.568Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 9,
-    "implemented": 6,
+    "total": 3,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-18",
-        "summary": "Create an Order data type in the backend that stores customer phone number, delivery address, order items (product IDs and quantities), total price, order timestamp, and caller Principal",
+        "id": "REQ-39",
+        "summary": "Debug and fix the removeFromCart backend function to ensure it properly removes products from the user's cart when called with a valid productId",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-19",
-        "summary": "Implement a backend function to create and store orders that accepts phone number, address, and cart items, calculates total price, and persists the order with caller Principal and current timestamp",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-20",
-        "summary": "Add a backend query function to retrieve all orders for the admin dashboard that returns array of orders with customer details, items, and totals",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-21",
-        "summary": "Create a checkout page component at /checkout route that displays cart summary, input fields for phone number and delivery address, order total in Indian Rupees, and a 'Place Order' button",
+        "id": "REQ-40",
+        "summary": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ]
       },
       {
-        "id": "REQ-22",
-        "summary": "Implement checkout flow that calls the backend order creation function with phone number and address, clears the cart on success, and displays confirmation message 'Your order will be delivered today!'",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/CheckoutPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/CheckoutPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-23",
-        "summary": "Add 'Proceed to Checkout' button to the cart page that navigates to /checkout route when cart has items",
+        "id": "REQ-41",
+        "summary": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/pages/CartPage.tsx"
         ],
         "matchedFiles": [
           "frontend/src/pages/CartPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-24",
-        "summary": "Add an Orders section to the admin dashboard that displays all customer orders in a table with columns for order date/time, customer phone number, delivery address, items ordered, and total price in Indian Rupees",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminDashboard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminDashboard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-25",
-        "summary": "Create a React Query hook for placing orders that calls the backend order creation function and invalidates cart queries on success",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-26",
-        "summary": "Create a React Query hook for fetching all orders in the admin dashboard that calls the backend orders query function",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
         ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/AdminDashboard.tsx",
     "frontend/src/pages/CartPage.tsx",
-    "frontend/src/pages/CheckoutPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

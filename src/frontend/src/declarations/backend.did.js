@@ -9,9 +9,16 @@
 import { IDL } from '@icp-sdk/core/candid';
 
 export const ProductId = IDL.Nat;
-export const Quantity = IDL.Nat;
 export const Product = IDL.Record({
   'id' : ProductId,
+  'name' : IDL.Text,
+  'description' : IDL.Text,
+  'imageUrl' : IDL.Text,
+  'category' : IDL.Text,
+  'price' : IDL.Float64,
+});
+export const Quantity = IDL.Nat;
+export const ProductInput = IDL.Record({
   'name' : IDL.Text,
   'description' : IDL.Text,
   'imageUrl' : IDL.Text,
@@ -26,14 +33,23 @@ export const Order = IDL.Record({
   'phoneNumber' : IDL.Text,
   'totalPrice' : IDL.Float64,
 });
+export const Update = IDL.Opt(IDL.Text);
 
 export const idlService = IDL.Service({
+  'addProductDirectly' : IDL.Func([Product], [], []),
   'addToCart' : IDL.Func([ProductId, Quantity], [], []),
+  'createMultipleProducts' : IDL.Func([IDL.Vec(ProductInput)], [], []),
   'createOrder' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Vec(IDL.Tuple(Product, Quantity))],
       [],
       [],
     ),
+  'createProduct' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Float64, IDL.Text, IDL.Text],
+      [ProductId],
+      [],
+    ),
+  'deleteProduct' : IDL.Func([ProductId], [], []),
   'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
   'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getCartContents' : IDL.Func(
@@ -41,7 +57,15 @@ export const idlService = IDL.Service({
       [IDL.Vec(IDL.Tuple(Product, Quantity))],
       ['query'],
     ),
+  'getNextProductId' : IDL.Func([], [ProductId], ['query']),
   'getProduct' : IDL.Func([ProductId], [Product], ['query']),
+  'incrementNextProductId' : IDL.Func([IDL.Nat], [], []),
+  'removeFromCart' : IDL.Func([ProductId], [], []),
+  'updateProduct' : IDL.Func(
+      [ProductId, Update, Update, IDL.Opt(IDL.Float64), Update, Update],
+      [],
+      [],
+    ),
   'updateProductPrice' : IDL.Func([ProductId, IDL.Float64], [], []),
   'verifyAdminPassword' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
 });
@@ -50,9 +74,16 @@ export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
   const ProductId = IDL.Nat;
-  const Quantity = IDL.Nat;
   const Product = IDL.Record({
     'id' : ProductId,
+    'name' : IDL.Text,
+    'description' : IDL.Text,
+    'imageUrl' : IDL.Text,
+    'category' : IDL.Text,
+    'price' : IDL.Float64,
+  });
+  const Quantity = IDL.Nat;
+  const ProductInput = IDL.Record({
     'name' : IDL.Text,
     'description' : IDL.Text,
     'imageUrl' : IDL.Text,
@@ -67,14 +98,23 @@ export const idlFactory = ({ IDL }) => {
     'phoneNumber' : IDL.Text,
     'totalPrice' : IDL.Float64,
   });
+  const Update = IDL.Opt(IDL.Text);
   
   return IDL.Service({
+    'addProductDirectly' : IDL.Func([Product], [], []),
     'addToCart' : IDL.Func([ProductId, Quantity], [], []),
+    'createMultipleProducts' : IDL.Func([IDL.Vec(ProductInput)], [], []),
     'createOrder' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Vec(IDL.Tuple(Product, Quantity))],
         [],
         [],
       ),
+    'createProduct' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Float64, IDL.Text, IDL.Text],
+        [ProductId],
+        [],
+      ),
+    'deleteProduct' : IDL.Func([ProductId], [], []),
     'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
     'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getCartContents' : IDL.Func(
@@ -82,7 +122,15 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(Product, Quantity))],
         ['query'],
       ),
+    'getNextProductId' : IDL.Func([], [ProductId], ['query']),
     'getProduct' : IDL.Func([ProductId], [Product], ['query']),
+    'incrementNextProductId' : IDL.Func([IDL.Nat], [], []),
+    'removeFromCart' : IDL.Func([ProductId], [], []),
+    'updateProduct' : IDL.Func(
+        [ProductId, Update, Update, IDL.Opt(IDL.Float64), Update, Update],
+        [],
+        [],
+      ),
     'updateProductPrice' : IDL.Func([ProductId, IDL.Float64], [], []),
     'verifyAdminPassword' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   });
