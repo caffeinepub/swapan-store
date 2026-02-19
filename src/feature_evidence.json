@@ -1,0 +1,113 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-a-checkout-page-component-at-checkout-route-that-displays-cart-summary-input-fields-for-phone-number-and-delivery-address-order-total-in-indian-rupees-and-a-place-order-button",
+      "featureTitle": "Create a checkout page component at /checkout route that displays cart summary, input fields for phone number and delivery address, order total in Indian Rupees, and a 'Place Order' button",
+      "files": [
+        "frontend/src/App.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-21"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-checkout-flow-that-calls-the-backend-order-creation-function-with-phone-number-and-address-clears-the-cart-on-success-and-displays-confirmation-message-your-order-will-be-delivered-today",
+      "featureTitle": "Implement checkout flow that calls the backend order creation function with phone number and address, clears the cart on success, and displays confirmation message 'Your order will be delivered today!'",
+      "files": [
+        "frontend/src/pages/CheckoutPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-22"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-proceed-to-checkout-button-to-the-cart-page-that-navigates-to-checkout-route-when-cart-has-items",
+      "featureTitle": "Add 'Proceed to Checkout' button to the cart page that navigates to /checkout route when cart has items",
+      "files": [
+        "frontend/src/pages/CartPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-23"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-an-orders-section-to-the-admin-dashboard-that-displays-all-customer-orders-in-a-table-with-columns-for-order-date-time-customer-phone-number-delivery-address-items-ordered-and-total-price-in-indian-rupees",
+      "featureTitle": "Add an Orders section to the admin dashboard that displays all customer orders in a table with columns for order date/time, customer phone number, delivery address, items ordered, and total price in Indian Rupees",
+      "files": [
+        "frontend/src/pages/AdminDashboard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-24"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-react-query-hook-for-placing-orders-that-calls-the-backend-order-creation-function-and-invalidates-cart-queries-on-success",
+      "featureTitle": "Create a React Query hook for placing orders that calls the backend order creation function and invalidates cart queries on success",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-25"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-react-query-hook-for-fetching-all-orders-in-the-admin-dashboard-that-calls-the-backend-orders-query-function",
+      "featureTitle": "Create a React Query hook for fetching all orders in the admin dashboard that calls the backend orders query function",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-26"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup defining routes for products, cart, checkout, admin dashboard, and admin login pages with shared layout including header and footer.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for backend integration including fetching products, cart contents, adding to cart, updating product prices, verifying admin password, placing orders with cart invalidation, and fetching all orders for admin dashboard with authentication check.",
+  "frontend/src/components/Header.tsx": "Sticky header component with Swapan Store branding, navigation links for Products and Admin with active state highlighting, and shopping cart button with item count badge.",
+  "frontend/src/components/Footer.tsx": "Footer component with copyright information and attribution link to caffeine.ai with proper UTM tracking parameters.",
+  "frontend/src/components/ProductCard.tsx": "Reusable product card component displaying product image, details, and price formatted in Indian Rupees with quantity selector and add-to-cart functionality.",
+  "frontend/src/pages/ProductsPage.tsx": "Main products listing page with hero banner, category filtering tabs, and responsive grid layout displaying all products with local generated images.",
+  "frontend/src/pages/CartPage.tsx": "Shopping cart page displaying cart items with images, quantities, and prices formatted in Indian Rupees, including order summary with subtotal and total calculations, and \"Proceed to Checkout\" button that navigates to /checkout route when cart has items.",
+  "frontend/src/index.css": "Global styles with OKLCH color system featuring warm, earthy Indian spice market palette (turmeric yellow, chili red, cumin brown) for both light and dark modes.",
+  "frontend/tailwind.config.js": "Tailwind configuration extended with custom fonts (Inter, Poppins), warm color palette, custom shadows, and design tokens matching the Indian grocery store aesthetic.",
+  "frontend/src/main.tsx": "Application entry point wrapping App with QueryClientProvider, InternetIdentityProvider, and Sonner toast notifications.",
+  "frontend/src/utils/formatPrice.ts": "Utility function that formats numeric price values to Indian Rupee format with ₹ symbol prefix and two decimal places.",
+  "frontend/src/pages/AdminDashboard.tsx": "Admin dashboard page with authentication guard displaying products table with inline price editing functionality and orders table showing customer phone numbers, delivery addresses, order items, timestamps, and totals sorted by most recent first, with logout button in header.",
+  "frontend/src/hooks/useAdminAuth.ts": "React hook that manages admin authentication state using sessionStorage for session-based persistence with login and logout methods.",
+  "frontend/src/pages/AdminLoginPage.tsx": "Admin login page component with password input field, submit button, error message display, and Swapan Store branding that verifies password via backend and redirects to admin dashboard on success.",
+  "frontend/src/pages/CheckoutPage.tsx": "Checkout page component displaying cart summary with product images, quantities, and prices, collecting customer phone number and delivery address via form inputs, and placing orders with confirmation message \"Your order will be delivered today!\" using the Swapan Store warm color theme."
+}
