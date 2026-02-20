@@ -1,50 +1,90 @@
 {
   "kind": "build_request",
-  "title": "Fix Admin link visibility in header navigation",
+  "title": "Fix products not displaying on product page",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-61",
-      "text": "Debug and fix the Header component to ensure the Admin navigation link is visible and clickable in the header navigation menu",
+      "id": "REQ-1",
+      "text": "Debug and fix the getAllProducts query in ProductsPage.tsx which is failing to fetch and display products from the backend despite successful deployments",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-final"
         ],
         "quotes": [
-          "i cant see the admin link"
+          "again no product in product page"
         ]
       },
       "acceptanceCriteria": [
-        "Admin link is visible in the header navigation menu alongside the Products link",
-        "Admin link navigates to /admin route when clicked",
-        "Admin link styling is consistent with other navigation links in the header"
+        "Products array is successfully fetched from backend main.mo getAllProducts method",
+        "Products are rendered in the grid layout on the products page",
+        "Console logs show successful data fetching without errors",
+        "Product cards display with correct image, name, price, and add-to-cart functionality"
       ]
     },
     {
-      "id": "REQ-62",
-      "text": "Verify that the Link component for Admin in Header.tsx has correct routing configuration and is not conditionally hidden",
-      "target": "frontend",
+      "id": "REQ-2",
+      "text": "Verify and fix the backend getAllProducts method in main.mo to ensure it returns all products correctly with all required fields (id, name, description, price, category, imageUrl)",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-final"
+        ],
+        "quotes": [
+          "again no product in product page"
         ]
       },
       "acceptanceCriteria": [
-        "Admin Link component exists in the Header component JSX",
-        "Admin Link has correct 'to' prop pointing to /admin route",
-        "No conditional rendering logic is hiding the Admin link from users"
+        "getAllProducts method returns all stored products from the products HashMap",
+        "Each product contains all required fields with valid data",
+        "Method can be successfully called from frontend via the ICP actor",
+        "Response format matches the Product type expected by frontend"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add comprehensive error logging to track the complete data flow from backend query through React Query to component rendering, capturing any transformation or mapping issues",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-final"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Console logs show the raw backend response from getAllProducts",
+        "Logs capture any data transformation steps in useGetAllProducts hook",
+        "Component rendering logs show the final products array being passed to ProductCard components",
+        "Error boundaries catch and display any runtime errors during product rendering"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Ensure the actor instance in useActor.ts is correctly initialized and connected to the deployed backend canister, with proper error handling for connection failures",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-final"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Actor instance successfully connects to the backend canister",
+        "Canister ID is correctly configured for the deployed environment",
+        "Connection errors are caught and logged with actionable messages",
+        "Query calls through the actor return valid responses"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the authentication flow for the admin dashboard",
-    "Keep the Admin link in the same navigation section as the Products link"
+    "Do not modify the Internet Identity authentication hooks (frontend/src/hooks/useInternetIdentity.ts)",
+    "Do not change the single-actor backend architecture in main.mo",
+    "Preserve all existing product CRUD functionality in the admin dashboard",
+    "Maintain the current React Query setup and caching strategy"
   ],
   "nonGoals": [
-    "Changing the admin authentication password",
-    "Modifying the admin dashboard layout or functionality",
-    "Adding additional navigation links beyond fixing the Admin link"
+    "Redesigning the product card layout or styling",
+    "Adding new product features or fields",
+    "Modifying the cart or checkout functionality",
+    "Changing the admin authentication system"
   ],
   "imageRequirements": {
     "required": [],

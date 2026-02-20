@@ -1,37 +1,76 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Admin link visibility in header navigation",
+  "title": "Fix products not displaying on product page",
   "requirements": [
     {
-      "id": "REQ-61",
-      "summary": "Debug and fix the Header component to ensure the Admin navigation link is visible and clickable in the header navigation menu",
+      "id": "REQ-1",
+      "summary": "Debug and fix the getAllProducts query in ProductsPage.tsx to successfully fetch and display products from the backend",
       "acceptanceCriteria": [
-        "Admin link is visible in the header navigation menu alongside the Products link",
-        "Admin link navigates to /admin route when clicked",
-        "Admin link styling is consistent with other navigation links in the header"
+        "Products array is successfully fetched from backend main.mo getAllProducts method",
+        "Products are rendered in the grid layout on the products page",
+        "Console logs show successful data fetching without errors",
+        "Product cards display with correct image, name, price, and add-to-cart functionality"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Header.tsx",
+          "path": "frontend/src/pages/ProductsPage.tsx",
           "operation": "modify",
-          "description": "Review and fix the navigation section to ensure the Admin Link component is rendered without conditional hiding. Verify the Link component has the correct 'to' prop pointing to /admin and is styled consistently with other navigation links. Ensure the Admin link appears alongside the Products link in the header navigation menu."
+          "description": "Add comprehensive debug logging to track the complete data flow from React Query through to component rendering. Log the raw backend response, any data transformations, and the final products array being passed to ProductCard components. Verify the useGetAllProducts hook is correctly invoked and inspect the data structure returned. Check for any filtering or mapping logic that might be hiding products."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add detailed logging in the useGetAllProducts hook to capture the raw actor response before any transformations. Log the actor instance state, query execution status, and any errors during the fetch operation. Ensure the getAllProducts method is being called correctly on the actor instance and that the response format matches the expected Product[] type from backend.d.ts."
         }
       ]
     },
     {
-      "id": "REQ-62",
-      "summary": "Verify that the Link component for Admin in Header.tsx has correct routing configuration and is not conditionally hidden",
+      "id": "REQ-3",
+      "summary": "Add comprehensive error logging to track the complete data flow from backend query through React Query to component rendering",
       "acceptanceCriteria": [
-        "Admin Link component exists in the Header component JSX",
-        "Admin Link has correct 'to' prop pointing to /admin route",
-        "No conditional rendering logic is hiding the Admin link from users"
+        "Console logs show the raw backend response from getAllProducts",
+        "Logs capture any data transformation steps in useGetAllProducts hook",
+        "Component rendering logs show the final products array being passed to ProductCard components",
+        "Error boundaries catch and display any runtime errors during product rendering"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Header.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Inspect the Admin Link component to confirm it exists in the JSX structure, has the correct 'to=\"/admin\"' prop, and is not wrapped in any conditional rendering logic (such as user authentication checks or display:none styles) that would prevent it from being visible to all users."
+          "description": "Enhance the useGetAllProducts hook with structured console logging that captures: 1) Actor instance initialization state, 2) Raw response from actor.getAllProducts() before any processing, 3) Data structure validation (check if response is an array, log array length and first item structure), 4) Any transformation or mapping steps applied to the data, 5) Final return value structure. Wrap the query function in try-catch to log any thrown errors with full stack traces."
+        },
+        {
+          "path": "frontend/src/pages/ProductsPage.tsx",
+          "operation": "modify",
+          "description": "Add component-level logging to track: 1) Products data received from useGetAllProducts (log the raw data object including isLoading, isError, data fields), 2) Filtered products after search/category filtering is applied (log array length and sample items), 3) Products being mapped to ProductCard components (log each product id/name before rendering), 4) Any conditional rendering logic that might prevent products from displaying. Add console.group/groupEnd for organized debug output."
+        },
+        {
+          "path": "frontend/src/components/ProductCard.tsx",
+          "operation": "modify",
+          "description": "Add validation logging at the component entry to verify each product prop contains all required fields (id, name, description, price, category, imageUrl). Log any missing or undefined fields that might cause rendering failures. Add error boundary-compatible error handling for malformed product data."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Ensure the actor instance in useActor.ts is correctly initialized and connected to the deployed backend canister",
+      "acceptanceCriteria": [
+        "Actor instance successfully connects to the backend canister",
+        "Canister ID is correctly configured for the deployed environment",
+        "Connection errors are caught and logged with actionable messages",
+        "Query calls through the actor return valid responses"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useActor.ts",
+          "operation": "modify",
+          "description": "Add comprehensive logging and error handling for actor initialization. Log: 1) The canister ID being used for connection, 2) The identity state (authenticated vs anonymous), 3) Actor creation success/failure with detailed error messages, 4) Network configuration and host URL. Add try-catch around actor creation with informative error messages that indicate whether the issue is with canister ID configuration, network connectivity, or authentication state. Verify the actor instance is not null/undefined before returning."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add actor instance validation before attempting to call getAllProducts. Log the actor object structure to verify it has the getAllProducts method. Add specific error handling for cases where actor is null, undefined, or missing expected methods. Include retry logic with exponential backoff for transient network failures."
         }
       ]
     }

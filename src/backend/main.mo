@@ -68,7 +68,7 @@ actor {
 
   // Get all products
   public query ({ caller }) func getAllProducts() : async [Product] {
-    products.values().toArray().sort();
+    products.values().toArray();
   };
 
   // Add product to cart
@@ -276,3 +276,4 @@ actor {
     products.remove(productId);
   };
 };
+

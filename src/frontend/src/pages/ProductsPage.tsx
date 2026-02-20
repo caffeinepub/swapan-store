@@ -1,37 +1,55 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import ProductCard from '../components/ProductCard';
 import Header from '../components/Header';
 import { useGetAllProducts } from '../hooks/useQueries';
 
 export default function ProductsPage() {
-  const { data: products = [], isLoading, error, refetch } = useGetAllProducts();
+  const { data: products = [], isLoading, error, refetch, isFetching } = useGetAllProducts();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Debug logging
+  // Debug logging - Component render
   useEffect(() => {
-    console.log('[ProductsPage] Component rendered');
-    console.log('[ProductsPage] isLoading:', isLoading);
-    console.log('[ProductsPage] error:', error);
-    console.log('[ProductsPage] products from hook:', products);
-    console.log('[ProductsPage] products length:', products?.length ?? 0);
+    const timestamp = new Date().toISOString();
+    console.group(`[ProductsPage ${timestamp}] Component Render`);
+    console.log(`[ProductsPage ${timestamp}] Render state:`, {
+      isLoading,
+      isFetching,
+      hasError: !!error,
+      productsCount: products?.length ?? 0,
+      selectedCategory,
+      searchQuery,
+    });
+    console.log(`[ProductsPage ${timestamp}] Products from hook:`, products);
+    
+    if (error) {
+      console.error(`[ProductsPage ${timestamp}] Error object:`, error);
+    }
     
     if (products && products.length > 0) {
-      console.log('[ProductsPage] First product:', products[0]);
-      console.log('[ProductsPage] Product IDs:', products.map(p => p.id));
+      console.log(`[ProductsPage ${timestamp}] First product:`, products[0]);
+      console.log(`[ProductsPage ${timestamp}] All product IDs:`, products.map(p => p.id));
+      console.log(`[ProductsPage ${timestamp}] All product names:`, products.map(p => p.name));
+    } else {
+      console.warn(`[ProductsPage ${timestamp}] No products available to display`);
     }
-  }, [products, isLoading, error]);
+    console.groupEnd();
+  }, [products, isLoading, isFetching, error, selectedCategory, searchQuery]);
 
   // Map backend image URLs to local generated assets
   const productsWithLocalImages = useMemo(() => {
-    console.log('[ProductsPage] Computing productsWithLocalImages...');
+    const timestamp = new Date().toISOString();
+    console.group(`[ProductsPage ${timestamp}] Image Mapping`);
+    console.log(`[ProductsPage ${timestamp}] Input products:`, products);
     
     if (!products || !Array.isArray(products)) {
-      console.warn('[ProductsPage] Products is not an array:', products);
+      console.warn(`[ProductsPage ${timestamp}] Products is not an array:`, products);
+      console.groupEnd();
       return [];
     }
 
@@ -51,39 +69,45 @@ export default function ProductsPage() {
     };
 
     try {
-      const result = products.map((product) => {
+      const result = products.map((product, index) => {
         if (!product || typeof product !== 'object') {
-          console.error('[ProductsPage] Invalid product:', product);
+          console.error(`[ProductsPage ${timestamp}] Invalid product at index ${index}:`, product);
           return null;
+        }
+        
+        const mappedImage = imageMap[product.name] || product.imageUrl || '/assets/generated/swapan-store-logo.dim_200x200.png';
+        
+        if (index < 3) { // Log first 3 mappings
+          console.log(`[ProductsPage ${timestamp}] Mapping product "${product.name}":`, {
+            originalImage: product.imageUrl,
+            mappedImage: mappedImage
+          });
         }
         
         return {
           ...product,
-          imageUrl: imageMap[product.name] || product.imageUrl || '/assets/generated/swapan-store-logo.dim_200x200.png',
+          imageUrl: mappedImage,
         };
-      }).filter(Boolean);
+      }).filter((p): p is NonNullable<typeof p> => p !== null);
       
-      console.log('[ProductsPage] productsWithLocalImages result:', result);
-      console.log('[ProductsPage] productsWithLocalImages length:', result.length);
+      console.log(`[ProductsPage ${timestamp}] Mapped ${result.length} products with local images`);
+      console.groupEnd();
       return result;
     } catch (err) {
-      console.error('[ProductsPage] Error mapping products:', err);
+      console.error(`[ProductsPage ${timestamp}] Error mapping products:`, err);
+      console.groupEnd();
       return [];
     }
   }, [products]);
 
   const categories = useMemo(() => {
-    console.log('[ProductsPage] Computing categories...');
-    
     if (!products || !Array.isArray(products)) {
       return ['All'];
     }
 
     try {
       const cats = new Set(products.map((p) => p?.category).filter(Boolean));
-      const result = ['All', ...Array.from(cats)];
-      console.log('[ProductsPage] categories:', result);
-      return result;
+      return ['All', ...Array.from(cats)];
     } catch (err) {
       console.error('[ProductsPage] Error computing categories:', err);
       return ['All'];
@@ -91,155 +115,177 @@ export default function ProductsPage() {
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    console.log('[ProductsPage] Computing filteredProducts...');
-    console.log('[ProductsPage] Starting with productsWithLocalImages:', productsWithLocalImages.length);
+    const timestamp = new Date().toISOString();
+    console.group(`[ProductsPage ${timestamp}] Product Filtering`);
+    console.log(`[ProductsPage ${timestamp}] Input:`, {
+      productsCount: productsWithLocalImages.length,
+      selectedCategory,
+      searchQuery,
+    });
     
     try {
       let filtered = productsWithLocalImages;
 
       // Filter by category
       if (selectedCategory !== 'All') {
-        console.log('[ProductsPage] Filtering by category:', selectedCategory);
+        const beforeCount = filtered.length;
         filtered = filtered.filter((p) => p?.category === selectedCategory);
-        console.log('[ProductsPage] After category filter:', filtered.length);
+        console.log(`[ProductsPage ${timestamp}] Category filter: ${beforeCount} → ${filtered.length}`);
       }
 
       // Filter by search query
       if (searchQuery.trim() !== '') {
-        console.log('[ProductsPage] Filtering by search query:', searchQuery);
+        const beforeCount = filtered.length;
         const query = searchQuery.toLowerCase();
         filtered = filtered.filter((p) => p?.name?.toLowerCase().includes(query));
-        console.log('[ProductsPage] After search filter:', filtered.length);
+        console.log(`[ProductsPage ${timestamp}] Search filter: ${beforeCount} → ${filtered.length}`);
       }
 
-      console.log('[ProductsPage] Final filteredProducts:', filtered);
-      console.log('[ProductsPage] Final filteredProducts length:', filtered.length);
+      console.log(`[ProductsPage ${timestamp}] Final filtered products: ${filtered.length}`);
+      if (filtered.length > 0) {
+        console.log(`[ProductsPage ${timestamp}] Sample filtered products:`, filtered.slice(0, 3).map(p => ({ id: p.id, name: p.name })));
+      }
+      console.groupEnd();
       return filtered;
     } catch (err) {
       console.error('[ProductsPage] Error filtering products:', err);
+      console.groupEnd();
       return [];
     }
   }, [productsWithLocalImages, selectedCategory, searchQuery]);
 
-  if (isLoading) {
-    console.log('[ProductsPage] Rendering loading state');
-    return (
-      <>
-        <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </>
-    );
-  }
+  // Log when filtered products change
+  useEffect(() => {
+    const timestamp = new Date().toISOString();
+    console.log(`[ProductsPage ${timestamp}] Filtered products updated:`, {
+      count: filteredProducts.length,
+      products: filteredProducts.map(p => ({ id: p.id, name: p.name })),
+    });
+  }, [filteredProducts]);
 
-  if (error) {
-    console.error('[ProductsPage] Rendering error state:', error);
-    return (
-      <>
-        <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <div className="container mx-auto px-4 py-8">
-          <Alert variant="destructive" className="mx-auto max-w-2xl">
+  const handleRetry = () => {
+    console.log('[ProductsPage] Manual retry triggered');
+    refetch();
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+
+      {/* Hero Banner */}
+      <div className="relative h-64 overflow-hidden bg-gradient-to-r from-primary/20 to-accent/20">
+        <img
+          src="/assets/generated/hero-banner.dim_1200x400.png"
+          alt="Swapan Store"
+          className="h-full w-full object-cover opacity-80"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <div className="text-center text-white">
+            <h1 className="mb-2 text-4xl font-bold md:text-5xl">Welcome to Swapan Store</h1>
+            <p className="text-lg md:text-xl">Authentic Indian Groceries & Spices</p>
+          </div>
+        </div>
+      </div>
+
+      <main className="container mx-auto px-4 py-8">
+        {/* Category Tabs */}
+        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="mb-8">
+          <TabsList className="flex flex-wrap justify-center gap-2">
+            {categories.map((category) => (
+              <TabsTrigger key={category} value={category} className="px-6">
+                {category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
+        {/* Error State */}
+        {error && (
+          <Alert variant="destructive" className="mb-8">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error loading products</AlertTitle>
+            <AlertTitle>Error Loading Products</AlertTitle>
             <AlertDescription className="mt-2 space-y-2">
-              <p>Unable to load products from the store. This could be due to a network issue or a problem with the backend.</p>
-              <p className="text-xs font-mono">
-                {error instanceof Error ? error.message : 'Unknown error occurred'}
+              <p>Failed to load products from the backend. This could be due to:</p>
+              <ul className="ml-4 list-disc space-y-1">
+                <li>Network connectivity issues</li>
+                <li>Backend canister not responding</li>
+                <li>Actor initialization failure</li>
+              </ul>
+              <p className="mt-2 text-sm">
+                Error details: {error instanceof Error ? error.message : 'Unknown error'}
               </p>
-              <Button 
-                onClick={() => refetch()} 
-                variant="outline" 
-                size="sm"
-                className="mt-2"
-              >
-                Try Again
+              <Button onClick={handleRetry} variant="outline" size="sm" className="mt-2">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Retry
               </Button>
             </AlertDescription>
           </Alert>
-        </div>
-      </>
-    );
-  }
+        )}
 
-  console.log('[ProductsPage] Rendering main content');
-  console.log('[ProductsPage] About to render', filteredProducts.length, 'products');
-
-  return (
-    <>
-      <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Banner */}
-        <div className="mb-12 overflow-hidden rounded-2xl">
-          <img
-            src="/assets/generated/hero-banner.dim_1200x400.png"
-            alt="Swapan Store - Indian Masalas and Groceries"
-            className="h-48 w-full object-cover md:h-64 lg:h-80"
-          />
-        </div>
-
-        {/* Page Title */}
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-4xl font-bold text-foreground">Our Products</h1>
-          <p className="text-lg text-muted-foreground">
-            Authentic Indian masalas, premium groceries, and pure food oils
-          </p>
-        </div>
-
-        {/* Category Filter */}
-        <div className="mb-8 flex justify-center">
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full max-w-2xl">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-              {categories.map((category) => (
-                <TabsTrigger key={category} value={category}>
-                  {category}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Products Grid */}
-        {filteredProducts.length === 0 ? (
-          <div className="py-16 text-center">
-            {searchQuery.trim() !== '' ? (
-              <div className="space-y-2">
-                <p className="text-lg font-medium text-foreground">No products found</p>
-                <p className="text-muted-foreground">
-                  No products match your search "{searchQuery}". Try clearing the search or using different keywords.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <p className="text-lg font-medium text-foreground">No products available</p>
-                <p className="text-muted-foreground">
-                  {products.length === 0 
-                    ? 'No products have been added to the store yet.' 
-                    : 'No products found in this category.'}
-                </p>
-              </div>
-            )}
-          </div>
-        ) : (
+        {/* Loading State */}
+        {isLoading && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredProducts.map((product) => {
-              if (!product || !product.id) {
-                console.error('[ProductsPage] Invalid product in render:', product);
-                return null;
-              }
-              
-              console.log('[ProductsPage] Rendering ProductCard for:', product.name, 'id:', product.id);
-              
-              try {
-                return <ProductCard key={String(product.id)} product={product} />;
-              } catch (err) {
-                console.error('[ProductsPage] Error rendering ProductCard:', err, 'product:', product);
-                return null;
-              }
-            })}
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="space-y-4">
+                <Skeleton className="aspect-square w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            ))}
           </div>
         )}
-      </div>
-    </>
+
+        {/* Empty State - No Products */}
+        {!isLoading && !error && products.length === 0 && (
+          <Alert className="mx-auto max-w-2xl">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>No Products Available</AlertTitle>
+            <AlertDescription>
+              <p className="mb-2">The store currently has no products in the database.</p>
+              <p className="text-sm text-muted-foreground">
+                If you're an admin, you can add products from the Admin Dashboard.
+              </p>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Empty State - No Filtered Results */}
+        {!isLoading && !error && products.length > 0 && filteredProducts.length === 0 && (
+          <Alert className="mx-auto max-w-2xl">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>No Products Found</AlertTitle>
+            <AlertDescription>
+              <p>No products match your current filters.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Try changing the category or search query.
+              </p>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Products Grid */}
+        {!isLoading && !error && filteredProducts.length > 0 && (
+          <>
+            <div className="mb-4 text-sm text-muted-foreground">
+              Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredProducts.map((product) => {
+                console.log('[ProductsPage] Rendering ProductCard for:', product.name, 'ID:', product.id);
+                return <ProductCard key={String(product.id)} product={product} />;
+              })}
+            </div>
+          </>
+        )}
+
+        {/* Fetching Indicator */}
+        {isFetching && !isLoading && (
+          <div className="mt-4 flex items-center justify-center text-sm text-muted-foreground">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Refreshing products...
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

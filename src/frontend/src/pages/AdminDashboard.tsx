@@ -1,146 +1,90 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Loader2, Edit2, Check, X, LogOut, Package, Plus, Pencil } from 'lucide-react';
+import { Loader2, Plus, Edit, AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useGetAllProducts, useUpdateProductPrice, useOrders } from '../hooks/useQueries';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { formatPrice } from '../utils/formatPrice';
-import type { Product } from '../backend';
-import { toast } from 'sonner';
 import { AddProductModal } from '../components/AddProductModal';
 import { EditProductModal } from '../components/EditProductModal';
+import type { Product } from '../backend';
 
 export default function AdminDashboard() {
-  const { isAuthenticated, logout } = useAdminAuth();
   const navigate = useNavigate();
-  const { data: products = [], isLoading } = useGetAllProducts();
-  const { data: orders = [], isLoading: ordersLoading } = useOrders();
+  const { isAuthenticated, logout } = useAdminAuth();
+  const { data: products = [], isLoading: productsLoading, error: productsError, refetch: refetchProducts, isFetching: productsFetching } = useGetAllProducts();
+  const { data: orders = [], isLoading: ordersLoading, error: ordersError, refetch: refetchOrders, isFetching: ordersFetching } = useOrders();
   const updatePrice = useUpdateProductPrice();
-  const [editingProductId, setEditingProductId] = useState<bigint | null>(null);
-  const [editPrice, setEditPrice] = useState<string>('');
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [editingPrice, setEditingPrice] = useState<bigint | null>(null);
+  const [newPrice, setNewPrice] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // Check authentication on mount
   useEffect(() => {
     if (!isAuthenticated) {
       navigate({ to: '/admin/login' });
     }
   }, [isAuthenticated, navigate]);
 
-  // Map backend image URLs to local generated assets
-  const productsWithLocalImages = useMemo(() => {
-    const imageMap: Record<string, string> = {
-      'Turmeric Powder': '/assets/generated/turmeric-powder.dim_400x400.png',
-      'Cumin Powder': '/assets/generated/cumin-seeds.dim_400x400.png',
-      'Garam Masala': '/assets/generated/garam-masala.dim_400x400.png',
-      'Red Chili Powder': '/assets/generated/masala-spices.dim_400x400.png',
-      'Basmati Rice': '/assets/generated/basmati-rice.dim_400x400.png',
-      'Yellow Lentils': '/assets/generated/red-lentils.dim_400x400.png',
-      'Wheat Flour': '/assets/generated/wheat-flour.dim_400x400.png',
-      'Chickpeas': '/assets/generated/chickpeas.dim_400x400.png',
-      'Mustard Oil': '/assets/generated/mustard-oil.dim_400x400.png',
-      'Coconut Oil': '/assets/generated/coconut-oil.dim_400x400.png',
-      'Sunflower Oil': '/assets/generated/sunflower-oil.dim_400x400.png',
-      'Sesame Oil': '/assets/generated/sesame-oil.dim_400x400.png',
-    };
-
-    return products.map((product) => ({
-      ...product,
-      imageUrl: imageMap[product.name] || product.imageUrl,
-    }));
-  }, [products]);
-
-  // Sort orders by timestamp descending (most recent first)
-  const sortedOrders = useMemo(() => {
-    return [...orders].sort((a, b) => Number(b.timestamp - a.timestamp));
-  }, [orders]);
-
-  const handleEditClick = (product: Product) => {
-    setEditingProductId(product.id);
-    setEditPrice(product.price.toString());
+  const handlePriceEdit = (productId: bigint, currentPrice: number) => {
+    setEditingPrice(productId);
+    setNewPrice(currentPrice.toString());
   };
 
-  const handleCancelEdit = () => {
-    setEditingProductId(null);
-    setEditPrice('');
-  };
-
-  const handleSavePrice = async (productId: bigint) => {
-    const newPrice = parseFloat(editPrice);
-
-    if (isNaN(newPrice) || newPrice <= 0) {
-      toast.error('Please enter a valid positive number');
+  const handlePriceSave = async (productId: bigint) => {
+    const price = parseFloat(newPrice);
+    if (isNaN(price) || price <= 0) {
       return;
     }
 
     try {
-      await updatePrice.mutateAsync({
-        productId,
-        newPrice,
-      });
-      toast.success('Price updated successfully');
-      setEditingProductId(null);
-      setEditPrice('');
+      await updatePrice.mutateAsync({ productId, newPrice: price });
+      setEditingPrice(null);
     } catch (error) {
-      toast.error('Failed to update price');
-      console.error(error);
-    }
-  };
-
-  const handlePriceInputChange = (value: string) => {
-    // Allow only numbers and decimal point
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      setEditPrice(value);
+      console.error('Error updating price:', error);
     }
   };
 
   const handleLogout = () => {
     logout();
-    toast.success('Logged out successfully');
     navigate({ to: '/admin/login' });
   };
 
-  const handleEditProduct = (product: Product) => {
-    setSelectedProduct(product);
-    setEditModalOpen(true);
-  };
-
-  const formatTimestamp = (timestamp: bigint) => {
-    const date = new Date(Number(timestamp) / 1000000); // Convert nanoseconds to milliseconds
-    return date.toLocaleString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatOrderItems = (items: [Product, bigint][]) => {
-    return items.map(([product, quantity]) => `${product.name} (${Number(quantity)})`).join(', ');
-  };
-
-  // Don't render if not authenticated
   if (!isAuthenticated) {
     return null;
   }
 
-  if (isLoading) {
+  // Loading state
+  if (productsLoading || ordersLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex items-center justify-between">
+          <Skeleton className="h-10 w-48" />
+          <Skeleton className="h-10 w-24" />
+        </div>
+        <div className="space-y-8">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-64 w-full" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-64 w-full" />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -148,199 +92,209 @@ export default function AdminDashboard() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage your products and orders</p>
-        </div>
-        <Button
-          variant="outline"
-          onClick={handleLogout}
-          className="gap-2"
-        >
-          <LogOut className="h-4 w-4" />
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <Button variant="outline" onClick={handleLogout}>
           Logout
         </Button>
       </div>
 
       <div className="space-y-8">
-        {/* Product Management */}
+        {/* Products Section */}
         <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Product Management</CardTitle>
-              <Button onClick={() => setAddModalOpen(true)} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Product
-              </Button>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Products</CardTitle>
+            <Button onClick={() => setIsAddModalOpen(true)} size="sm" className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Product
+            </Button>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
+            {productsError ? (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error Loading Products</AlertTitle>
+                <AlertDescription className="mt-2 space-y-3">
+                  <p>Unable to load products. Please try again.</p>
+                  <div className="rounded-md bg-destructive/10 p-3">
+                    <p className="text-xs font-mono">
+                      {productsError instanceof Error ? productsError.message : 'Unknown error'}
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={() => refetchProducts()} 
+                    variant="outline" 
+                    size="sm"
+                    disabled={productsFetching}
+                    className="gap-2"
+                  >
+                    {productsFetching ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Retrying...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4" />
+                        Try Again
+                      </>
+                    )}
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            ) : products.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">No products available</p>
+            ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-20">Image</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead className="w-40">Price</TableHead>
-                    <TableHead className="w-32 text-right">Actions</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {productsWithLocalImages.map((product) => (
-                    <TableRow key={Number(product.id)}>
-                      <TableCell>
-                        <div className="h-12 w-12 overflow-hidden rounded-md bg-muted">
-                          <img
-                            src={product.imageUrl}
-                            alt={product.name}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                      </TableCell>
+                  {products.map((product) => (
+                    <TableRow key={String(product.id)}>
                       <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell className="text-muted-foreground">{product.category}</TableCell>
+                      <TableCell>{product.category}</TableCell>
                       <TableCell>
-                        {editingProductId === product.id ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm">₹</span>
+                        {editingPrice === product.id ? (
+                          <div className="flex gap-2">
                             <Input
-                              type="text"
-                              value={editPrice}
-                              onChange={(e) => handlePriceInputChange(e.target.value)}
-                              className="h-8 w-24"
-                              autoFocus
+                              type="number"
+                              value={newPrice}
+                              onChange={(e) => setNewPrice(e.target.value)}
+                              className="w-24"
+                              step="0.01"
                             />
-                          </div>
-                        ) : (
-                          <span className="text-lg font-semibold text-primary">
-                            {formatPrice(product.price)}
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {editingProductId === product.id ? (
-                          <div className="flex justify-end gap-1">
                             <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8"
-                              onClick={() => handleSavePrice(product.id)}
+                              size="sm"
+                              onClick={() => handlePriceSave(product.id)}
                               disabled={updatePrice.isPending}
                             >
                               {updatePrice.isPending ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
                               ) : (
-                                <Check className="h-4 w-4 text-green-600" />
+                                'Save'
                               )}
                             </Button>
                             <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8"
-                              onClick={handleCancelEdit}
-                              disabled={updatePrice.isPending}
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingPrice(null)}
                             >
-                              <X className="h-4 w-4 text-red-600" />
+                              Cancel
                             </Button>
                           </div>
                         ) : (
-                          <div className="flex justify-end gap-1">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8"
-                              onClick={() => handleEditProduct(product)}
-                              title="Edit product"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8"
-                              onClick={() => handleEditClick(product)}
-                              title="Quick edit price"
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          <button
+                            onClick={() => handlePriceEdit(product.id, product.price)}
+                            className="hover:underline"
+                          >
+                            {formatPrice(product.price)}
+                          </button>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setEditingProduct(product)}
+                          className="gap-2"
+                        >
+                          <Edit className="h-4 w-4" />
+                          Edit
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-            </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Orders Section */}
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              <CardTitle>Customer Orders</CardTitle>
-            </div>
+            <CardTitle>Recent Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            {ordersLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : sortedOrders.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground">
-                No orders yet
-              </div>
+            {ordersError ? (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error Loading Orders</AlertTitle>
+                <AlertDescription className="mt-2 space-y-3">
+                  <p>Unable to load orders. Please try again.</p>
+                  <div className="rounded-md bg-destructive/10 p-3">
+                    <p className="text-xs font-mono">
+                      {ordersError instanceof Error ? ordersError.message : 'Unknown error'}
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={() => refetchOrders()} 
+                    variant="outline" 
+                    size="sm"
+                    disabled={ordersFetching}
+                    className="gap-2"
+                  >
+                    {ordersFetching ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Retrying...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4" />
+                        Try Again
+                      </>
+                    )}
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            ) : orders.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">No orders yet</p>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Order Date</TableHead>
-                      <TableHead>Phone Number</TableHead>
-                      <TableHead>Delivery Address</TableHead>
-                      <TableHead>Items</TableHead>
-                      <TableHead className="text-right">Total</TableHead>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Address</TableHead>
+                    <TableHead>Items</TableHead>
+                    <TableHead>Total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orders.map((order, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-mono text-xs">
+                        {order.customerPrincipal.toString().slice(0, 8)}...
+                      </TableCell>
+                      <TableCell>{order.phoneNumber}</TableCell>
+                      <TableCell className="max-w-xs truncate">{order.address}</TableCell>
+                      <TableCell>{order.items.length}</TableCell>
+                      <TableCell className="font-semibold">
+                        {formatPrice(order.totalPrice)}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedOrders.map((order, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">
-                          {formatTimestamp(order.timestamp)}
-                        </TableCell>
-                        <TableCell>{order.phoneNumber}</TableCell>
-                        <TableCell className="max-w-xs">
-                          <div className="truncate" title={order.address}>
-                            {order.address}
-                          </div>
-                        </TableCell>
-                        <TableCell className="max-w-md">
-                          <div className="truncate" title={formatOrderItems(order.items)}>
-                            {formatOrderItems(order.items)}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right font-semibold text-primary">
-                          {formatPrice(order.totalPrice)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                  ))}
+                </TableBody>
+              </Table>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Modals */}
-      <AddProductModal open={addModalOpen} onOpenChange={setAddModalOpen} />
-      <EditProductModal
-        open={editModalOpen}
-        onOpenChange={setEditModalOpen}
-        product={selectedProduct}
-      />
+      <AddProductModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+      {editingProduct && (
+        <EditProductModal
+          product={editingProduct}
+          open={!!editingProduct}
+          onOpenChange={(open) => !open && setEditingProduct(null)}
+        />
+      )}
     </div>
   );
 }

@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-debug-and-fix-the-header-component-to-ensure-the-admin-navigation-link-is-visible-and-clickable-in-the-header-navigation-menu",
-      "featureTitle": "Debug and fix the Header component to ensure the Admin navigation link is visible and clickable in the header navigation menu",
+      "featureId": "feature-debug-and-fix-the-getallproducts-query-in-productspage-tsx-which-is-failing-to-fetch-and-display-products-from-the-backend-despite-successful-deployments",
+      "featureTitle": "Debug and fix the getAllProducts query in ProductsPage.tsx which is failing to fetch and display products from the backend despite successful deployments",
       "files": [
-        "frontend/src/components/Header.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/ProductsPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -15,15 +16,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-61"
+        "REQ-1"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-verify-that-the-link-component-for-admin-in-header-tsx-has-correct-routing-configuration-and-is-not-conditionally-hidden",
-      "featureTitle": "Verify that the Link component for Admin in Header.tsx has correct routing configuration and is not conditionally hidden",
+      "featureId": "feature-add-comprehensive-error-logging-to-track-the-complete-data-flow-from-backend-query-through-react-query-to-component-rendering-capturing-any-transformation-or-mapping-issues",
+      "featureTitle": "Add comprehensive error logging to track the complete data flow from backend query through React Query to component rendering, capturing any transformation or mapping issues",
       "files": [
-        "frontend/src/components/Header.tsx"
+        "frontend/src/components/ProductCard.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/ProductsPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -33,7 +36,25 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-62"
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-the-actor-instance-in-useactor-ts-is-correctly-initialized-and-connected-to-the-deployed-backend-canister-with-proper-error-handling-for-connection-failures",
+      "featureTitle": "Ensure the actor instance in useActor.ts is correctly initialized and connected to the deployed backend canister, with proper error handling for connection failures",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }

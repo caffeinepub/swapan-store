@@ -28,9 +28,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('[ErrorBoundary] Caught error:', error);
-    console.error('[ErrorBoundary] Error info:', errorInfo);
-    console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);
+    const timestamp = new Date().toISOString();
+    console.error(`[ErrorBoundary ${timestamp}] Caught error:`, error);
+    console.error(`[ErrorBoundary ${timestamp}] Error name:`, error.name);
+    console.error(`[ErrorBoundary ${timestamp}] Error message:`, error.message);
+    console.error(`[ErrorBoundary ${timestamp}] Error stack:`, error.stack);
+    console.error(`[ErrorBoundary ${timestamp}] Component stack:`, errorInfo.componentStack);
+    console.error(`[ErrorBoundary ${timestamp}] Error info:`, errorInfo);
     
     this.setState({
       error,
@@ -39,11 +43,16 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
+    console.log('[ErrorBoundary] Resetting error state');
     this.setState({
       hasError: false,
       error: null,
       errorInfo: null,
     });
+  };
+
+  handleReload = () => {
+    console.log('[ErrorBoundary] Reloading page');
     window.location.reload();
   };
 
@@ -54,29 +63,52 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="flex min-h-[60vh] items-center justify-center p-4">
-          <div className="max-w-md space-y-4 text-center">
-            <div className="flex justify-center">
-              <AlertCircle className="h-12 w-12 text-destructive" />
+        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+          <div className="w-full max-w-2xl space-y-6">
+            <div className="flex items-center gap-3 text-destructive">
+              <AlertCircle className="h-8 w-8" />
+              <h1 className="text-2xl font-bold">Something went wrong</h1>
             </div>
-            <h2 className="text-2xl font-bold text-foreground">Something went wrong</h2>
-            <p className="text-muted-foreground">
-              We encountered an unexpected error. Please try reloading the page.
+            
+            <div className="space-y-4 rounded-lg border border-destructive/50 bg-destructive/10 p-6">
+              <div>
+                <h2 className="mb-2 font-semibold">Error Details:</h2>
+                <p className="text-sm font-mono text-destructive">
+                  {this.state.error?.name}: {this.state.error?.message}
+                </p>
+              </div>
+              
+              {this.state.error?.stack && (
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold">Stack Trace:</h3>
+                  <pre className="max-h-48 overflow-auto rounded bg-muted p-3 text-xs">
+                    {this.state.error.stack}
+                  </pre>
+                </div>
+              )}
+              
+              {this.state.errorInfo?.componentStack && (
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold">Component Stack:</h3>
+                  <pre className="max-h-48 overflow-auto rounded bg-muted p-3 text-xs">
+                    {this.state.errorInfo.componentStack}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <Button onClick={this.handleReset} variant="default">
+                Try Again
+              </Button>
+              <Button onClick={this.handleReload} variant="outline">
+                Reload Page
+              </Button>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              If this problem persists, please check the browser console for more details or contact support.
             </p>
-            {this.state.error && (
-              <details className="mt-4 rounded-lg border border-border bg-muted p-4 text-left">
-                <summary className="cursor-pointer font-medium text-foreground">
-                  Error details
-                </summary>
-                <pre className="mt-2 overflow-auto text-xs text-muted-foreground">
-                  {this.state.error.toString()}
-                  {this.state.errorInfo?.componentStack}
-                </pre>
-              </details>
-            )}
-            <Button onClick={this.handleReset} className="mt-4">
-              Reload Page
-            </Button>
           </div>
         </div>
       );

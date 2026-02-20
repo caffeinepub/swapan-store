@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, Minus } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,20 +16,48 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const addToCart = useAddToCart();
 
-  console.log('[ProductCard] Rendering card for product:', product?.name, 'imageUrl:', product?.imageUrl);
+  // Component mount and product validation logging
+  useEffect(() => {
+    const timestamp = new Date().toISOString();
+    console.group(`[ProductCard ${timestamp}] Component Mount/Update`);
+    console.log(`[ProductCard ${timestamp}] Product:`, {
+      id: product?.id,
+      name: product?.name,
+      price: product?.price,
+      category: product?.category,
+      imageUrl: product?.imageUrl,
+      hasAllFields: !!(product?.id && product?.name && product?.price),
+    });
+    
+    if (!product) {
+      console.error(`[ProductCard ${timestamp}] Product is null or undefined`);
+    } else if (!product.id) {
+      console.error(`[ProductCard ${timestamp}] Product missing ID:`, product);
+    } else if (!product.name) {
+      console.error(`[ProductCard ${timestamp}] Product missing name:`, product);
+    }
+    console.groupEnd();
+  }, [product]);
 
   // Defensive checks
   if (!product) {
-    console.error('[ProductCard] Product is null or undefined');
+    console.error('[ProductCard] Product is null or undefined - not rendering');
     return null;
   }
 
   if (!product.id || !product.name) {
-    console.error('[ProductCard] Product missing required fields:', product);
+    console.error('[ProductCard] Product missing required fields - not rendering:', product);
     return null;
   }
 
   const handleAddToCart = async () => {
+    const timestamp = new Date().toISOString();
+    console.log(`[ProductCard ${timestamp}] Add to cart clicked:`, {
+      productId: product.id,
+      productName: product.name,
+      quantity,
+    });
+    
     try {
       await addToCart.mutateAsync({
         productId: product.id,
@@ -37,6 +65,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       });
       toast.success(`Added ${quantity} ${product.name} to cart`);
       setQuantity(1);
+      console.log(`[ProductCard ${timestamp}] Successfully added to cart`);
     } catch (error) {
       toast.error('Failed to add to cart');
       console.error('[ProductCard] Error adding to cart:', error);
