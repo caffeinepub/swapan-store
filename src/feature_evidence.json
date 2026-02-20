@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-verify-and-fix-the-useremovefromcart-react-query-mutation-hook-to-ensure-it-correctly-calls-the-backend-removefromcart-function-and-properly-invalidates-the-cart-query-cache-on-success",
-      "featureTitle": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
+      "featureId": "feature-investigate-and-identify-the-specific-error-occurring-on-the-deployed-home-page-that-prevents-products-from-displaying-in-version-12",
+      "featureTitle": "Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying in Version 12",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/ProductsPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -15,15 +16,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-40"
+        "REQ-57"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-remove-button-in-cartpage-properly-triggers-the-removefromcart-mutation-with-the-correct-product-id-when-clicked",
-      "featureTitle": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
+      "featureId": "feature-fix-the-identified-error-in-the-productspage-component-or-useproducts-hook-that-is-preventing-products-from-rendering-on-the-main-products-page",
+      "featureTitle": "Fix the identified error in the ProductsPage component or useProducts hook that is preventing products from rendering on the main products page",
       "files": [
-        "frontend/src/pages/CartPage.tsx"
+        "frontend/src/components/ProductCard.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/ProductsPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -33,7 +36,27 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-41"
+        "REQ-58"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-error-boundary-or-try-catch-handling-to-the-productspage-component-to-gracefully-handle-and-display-any-runtime-errors-that-occur-during-product-fetching-or-rendering",
+      "featureTitle": "Add error boundary or try-catch handling to the ProductsPage component to gracefully handle and display any runtime errors that occur during product fetching or rendering",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/ErrorBoundary.tsx",
+        "frontend/src/pages/ProductsPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-60"
       ],
       "confidence": "high"
     }

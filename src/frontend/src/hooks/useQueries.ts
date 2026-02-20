@@ -6,21 +6,67 @@ import { toast } from 'sonner';
 
 // Query to fetch all products
 export function useGetAllProducts() {
-  const { actor, isFetching } = useActor();
+  const { actor } = useActor();
 
   return useQuery<Product[]>({
     queryKey: ['products'],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllProducts();
+      console.log('[useGetAllProducts] Query starting...');
+      console.log('[useGetAllProducts] Actor available:', !!actor);
+      
+      if (!actor) {
+        console.log('[useGetAllProducts] No actor, returning empty array');
+        return [];
+      }
+      
+      try {
+        console.log('[useGetAllProducts] Calling backend.getAllProducts()...');
+        const products = await actor.getAllProducts();
+        console.log('[useGetAllProducts] Backend response:', products);
+        console.log('[useGetAllProducts] Number of products:', products?.length ?? 0);
+        
+        // Validate products array
+        if (!Array.isArray(products)) {
+          console.error('[useGetAllProducts] Response is not an array:', products);
+          throw new Error('Invalid response from backend: expected array of products');
+        }
+        
+        // Validate each product
+        const validProducts = products.filter((product, index) => {
+          if (!product || typeof product !== 'object') {
+            console.error(`[useGetAllProducts] Invalid product at index ${index}:`, product);
+            return false;
+          }
+          
+          if (!product.id || !product.name) {
+            console.error(`[useGetAllProducts] Product missing required fields at index ${index}:`, product);
+            return false;
+          }
+          
+          return true;
+        });
+        
+        if (validProducts.length !== products.length) {
+          console.warn(`[useGetAllProducts] Filtered out ${products.length - validProducts.length} invalid products`);
+        }
+        
+        console.log('[useGetAllProducts] Returning valid products:', validProducts);
+        return validProducts;
+      } catch (error) {
+        console.error('[useGetAllProducts] Error fetching products:', error);
+        console.error('[useGetAllProducts] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+        throw error;
+      }
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor,
+    retry: 2,
+    retryDelay: 1000,
   });
 }
 
 // Query to fetch cart contents
 export function useGetCartContents() {
-  const { actor, isFetching } = useActor();
+  const { actor } = useActor();
 
   return useQuery<[Product, Quantity][]>({
     queryKey: ['cart'],
@@ -28,7 +74,7 @@ export function useGetCartContents() {
       if (!actor) return [];
       return actor.getCartContents();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor,
   });
 }
 
@@ -120,7 +166,7 @@ export function usePlaceOrder() {
 
 // Query to fetch all orders (admin only)
 export function useOrders() {
-  const { actor, isFetching } = useActor();
+  const { actor } = useActor();
   const { isAuthenticated } = useAdminAuth();
 
   return useQuery<Order[]>({
@@ -129,7 +175,7 @@ export function useOrders() {
       if (!actor) return [];
       return actor.getAllOrders();
     },
-    enabled: !!actor && !isFetching && isAuthenticated,
+    enabled: !!actor && isAuthenticated,
   });
 }
 

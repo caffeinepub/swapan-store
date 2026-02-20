@@ -1,39 +1,77 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix cart removal functionality",
+  "title": "Debug and fix error preventing products from displaying on home page",
   "requirements": [
     {
-      "id": "REQ-40",
-      "summary": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
+      "id": "REQ-57",
+      "summary": "Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying in Version 12",
       "acceptanceCriteria": [
-        "The mutation hook calls the backend removeFromCart function with the correct productId",
-        "On successful removal, the cart query is invalidated and refetched",
-        "Error states are handled and displayed to the user",
-        "The UI updates immediately to reflect the removed item"
+        "Error message and stack trace are identified from browser console or deployment logs",
+        "Root cause of the error is determined (e.g., network request failure, data transformation issue, rendering exception)"
       ],
       "file_operations": [
         {
+          "path": "frontend/src/pages/ProductsPage.tsx",
+          "operation": "modify",
+          "description": "Add comprehensive error logging to capture and identify the specific error preventing products from displaying. Include logging for the products data structure, loading states, error states, and any data transformation steps. Add console.error calls with stack traces to identify where the error occurs in the component lifecycle."
+        },
+        {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Review and fix the useRemoveFromCart mutation hook to ensure it properly calls backend.removeFromCart with the productId parameter, includes proper error handling with toast notifications, and invalidates the cart query on success to trigger an immediate refetch of cart data"
+          "description": "Add error logging to the useProducts hook to capture any errors during the getAllProducts backend call. Log the raw response data, any transformation errors, and React Query error states to help identify if the issue is in data fetching or processing."
         }
       ]
     },
     {
-      "id": "REQ-41",
-      "summary": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
+      "id": "REQ-58",
+      "summary": "Fix the identified error in the ProductsPage component or useProducts hook that is preventing products from rendering on the main products page",
       "acceptanceCriteria": [
-        "Clicking the Remove button calls the mutation with the correct productId",
-        "The button shows loading state during the mutation",
-        "Success feedback is provided to the user (toast notification or visual confirmation)",
-        "The cart updates to remove the item from the display"
+        "ProductsPage successfully fetches products from the backend without throwing errors",
+        "Products are rendered in the UI with correct images, names, prices, and add-to-cart buttons",
+        "No console errors related to product fetching or rendering appear in the deployed application"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/CartPage.tsx",
+          "path": "frontend/src/pages/ProductsPage.tsx",
           "operation": "modify",
-          "description": "Review and fix the Remove button click handler to ensure it calls removeFromCart.mutate with the correct product.id, displays loading state on the button during mutation execution, shows success feedback via toast notification, and ensures the cart display updates immediately after successful removal"
+          "description": "Fix the identified error that prevents products from rendering. Potential fixes include: handling null/undefined products data, fixing the local image mapping logic that may be causing rendering failures, ensuring proper type conversions for bigint ProductId values, fixing any array filtering/mapping errors in the category filter or search logic, and ensuring the ProductCard component receives valid data. Remove or update the extensive debug logging after the fix is verified."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Fix any issues in the useProducts hook related to data fetching or transformation. Ensure the getAllProducts call properly handles the backend response, correctly transforms bigint values if needed, and returns data in the expected format. Add proper error handling to prevent the hook from throwing unhandled errors."
+        },
+        {
+          "path": "frontend/src/components/ProductCard.tsx",
+          "operation": "modify",
+          "description": "Add defensive checks to handle edge cases that may cause rendering errors, such as missing product fields, invalid price values, or problematic bigint conversions. Ensure the component gracefully handles all possible product data states without crashing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-60",
+      "summary": "Add error boundary or try-catch handling to the ProductsPage component to gracefully handle and display any runtime errors that occur during product fetching or rendering",
+      "acceptanceCriteria": [
+        "ProductsPage displays a user-friendly error message if product fetching fails",
+        "Error details are logged to console for debugging purposes",
+        "Application does not crash when errors occur in ProductsPage"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/ProductsPage.tsx",
+          "operation": "modify",
+          "description": "Add error handling to display a user-friendly error message when product fetching fails or rendering errors occur. Show the React Query error state with a helpful message like 'Unable to load products. Please try again later.' Include the error details in console logs for debugging. Ensure the component does not crash and remains interactive even when errors occur."
+        },
+        {
+          "path": "frontend/src/components/ErrorBoundary.tsx",
+          "operation": "create",
+          "description": "Create a React Error Boundary component to catch and handle any unhandled rendering errors in the ProductsPage and other components. The error boundary should display a user-friendly fallback UI, log error details to the console, and provide a way to recover (e.g., a reload button)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap the products route with the ErrorBoundary component to catch any unhandled errors in ProductsPage and its children. Ensure the error boundary is positioned to protect the main content area while keeping navigation functional."
         }
       ]
     }

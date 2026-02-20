@@ -1,83 +1,98 @@
-import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet } from '@tanstack/react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { InternetIdentityProvider } from './hooks/useInternetIdentity';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
 import ProductsPage from './pages/ProductsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLoginPage from './pages/AdminLoginPage';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
-const queryClient = new QueryClient();
-
-// Layout component that includes Header and Footer
-function Layout() {
-  return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
-  );
-}
-
-// Define routes
+// Create root route with layout
 const rootRoute = createRootRoute({
-  component: Layout,
+  component: () => {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Outlet />
+      </div>
+    );
+  },
 });
 
-const indexRoute = createRoute({
+// Products page route (renders its own header with search)
+const productsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: ProductsPage,
+  component: () => (
+    <ErrorBoundary>
+      <div className="flex min-h-screen flex-col">
+        <main className="flex-1">
+          <ProductsPage />
+        </main>
+        <Footer />
+      </div>
+    </ErrorBoundary>
+  ),
+});
+
+// Layout with header (no search) for other pages
+const LayoutWithHeader = () => {
+  return (
+    <ErrorBoundary>
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </ErrorBoundary>
+  );
+};
+
+const layoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'layout',
+  component: LayoutWithHeader,
 });
 
 const cartRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => layoutRoute,
   path: '/cart',
   component: CartPage,
 });
 
 const checkoutRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => layoutRoute,
   path: '/checkout',
   component: CheckoutPage,
 });
 
 const adminRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => layoutRoute,
   path: '/admin',
   component: AdminDashboard,
 });
 
 const adminLoginRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => layoutRoute,
   path: '/admin/login',
   component: AdminLoginPage,
 });
 
-// Create router
-const routeTree = rootRoute.addChildren([indexRoute, cartRoute, checkoutRoute, adminRoute, adminLoginRoute]);
+const routeTree = rootRoute.addChildren([
+  productsRoute,
+  layoutRoute.addChildren([cartRoute, checkoutRoute, adminRoute, adminLoginRoute]),
+]);
+
 const router = createRouter({ routeTree });
 
-// Declare router type for TypeScript
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
 }
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <InternetIdentityProvider>
-        <RouterProvider router={router} />
-      </InternetIdentityProvider>
-    </QueryClientProvider>
-  );
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App;

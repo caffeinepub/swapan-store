@@ -16,6 +16,19 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const addToCart = useAddToCart();
 
+  console.log('[ProductCard] Rendering card for product:', product?.name, 'imageUrl:', product?.imageUrl);
+
+  // Defensive checks
+  if (!product) {
+    console.error('[ProductCard] Product is null or undefined');
+    return null;
+  }
+
+  if (!product.id || !product.name) {
+    console.error('[ProductCard] Product missing required fields:', product);
+    return null;
+  }
+
   const handleAddToCart = async () => {
     try {
       await addToCart.mutateAsync({
@@ -26,33 +39,46 @@ export default function ProductCard({ product }: ProductCardProps) {
       setQuantity(1);
     } catch (error) {
       toast.error('Failed to add to cart');
-      console.error(error);
+      console.error('[ProductCard] Error adding to cart:', error);
     }
   };
 
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
+  // Safe price formatting
+  const displayPrice = typeof product.price === 'number' && !isNaN(product.price) 
+    ? formatPrice(product.price) 
+    : '₹0.00';
+
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="p-0">
         <div className="aspect-square overflow-hidden bg-muted">
           <img
-            src={product.imageUrl}
-            alt={product.name}
+            src={product.imageUrl || '/assets/generated/swapan-store-logo.dim_200x200.png'}
+            alt={product.name || 'Product'}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            onError={(e) => {
+              console.error('[ProductCard] Image failed to load:', product.imageUrl);
+              e.currentTarget.src = '/assets/generated/swapan-store-logo.dim_200x200.png';
+            }}
           />
         </div>
       </CardHeader>
       <CardContent className="p-4">
         <div className="mb-2 flex items-start justify-between gap-2">
           <CardTitle className="text-lg">{product.name}</CardTitle>
-          <Badge variant="secondary" className="shrink-0 text-xs">
-            {product.category}
-          </Badge>
+          {product.category && (
+            <Badge variant="secondary" className="shrink-0 text-xs">
+              {product.category}
+            </Badge>
+          )}
         </div>
-        <p className="mb-3 text-sm text-muted-foreground line-clamp-2">{product.description}</p>
-        <p className="text-2xl font-bold text-primary">{formatPrice(product.price)}</p>
+        {product.description && (
+          <p className="mb-3 text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+        )}
+        <p className="text-2xl font-bold text-primary">{displayPrice}</p>
       </CardContent>
       <CardFooter className="flex items-center gap-2 p-4 pt-0">
         <div className="flex items-center gap-2 rounded-md border border-border">

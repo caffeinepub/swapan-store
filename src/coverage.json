@@ -1,42 +1,63 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T22:40:31.568Z",
+  "generatedAt": "2026-02-20T00:43:47.533Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 2,
+    "total": 4,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-39",
-        "summary": "Debug and fix the removeFromCart backend function to ensure it properly removes products from the user's cart when called with a valid productId",
+        "id": "REQ-57",
+        "summary": "Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying in Version 12",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/ProductsPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/ProductsPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-58",
+        "summary": "Fix the identified error in the ProductsPage component or useProducts hook that is preventing products from rendering on the main products page",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/ProductsPage.tsx",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/ProductCard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/ProductsPage.tsx",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/ProductCard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-59",
+        "summary": "Verify that the backend getAllProducts function returns product data in the expected format with all required fields (id, name, description, price, category, imageUrl)",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-40",
-        "summary": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
+        "id": "REQ-60",
+        "summary": "Add error boundary or try-catch handling to the ProductsPage component to gracefully handle and display any runtime errors that occur during product fetching or rendering",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/pages/ProductsPage.tsx",
+          "frontend/src/components/ErrorBoundary.tsx",
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-41",
-        "summary": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/CartPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/CartPage.tsx"
+          "frontend/src/pages/ProductsPage.tsx",
+          "frontend/src/components/ErrorBoundary.tsx",
+          "frontend/src/App.tsx"
         ]
       }
     ]
@@ -47,8 +68,11 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/ErrorBoundary.tsx",
+    "frontend/src/components/ProductCard.tsx",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/CartPage.tsx",
+    "frontend/src/pages/ProductsPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

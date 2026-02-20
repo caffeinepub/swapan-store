@@ -1,10 +1,11 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 17,
+  "projectStateVersion": 27,
   "summary": "E-commerce app for Swapan Store selling Indian masalas, groceries, and food oils",
   "architectural_notes": [],
   "known_issues": [
-    "Cart removal feature not working in Version 7"
+    "Products not displaying on the main Products page in the deployed application",
+    "Error encountered when attempting to view products on the deployed home page in Version 12"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -223,6 +224,118 @@
         "REQ-41"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-generate-a-new-logo-image-based-on-the-uploaded-swapan-store-logo-design-with-vintage-script-typography-on-beige-tan-background",
+      "title": "Generate a new logo image based on the uploaded 'Swapan Store' logo design with vintage script typography on beige/tan background",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-header-component-to-display-the-newly-generated-swapan-store-logo-image-instead-of-the-current-text-based-branding",
+      "title": "Update the Header component to display the newly generated Swapan Store logo image instead of the current text-based branding",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-search-input-field-in-the-header-component-that-allows-users-to-type-product-search-queries",
+      "title": "Create a search input field in the Header component that allows users to type product search queries",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-client-side-product-filtering-in-the-productspage-component-that-filters-displayed-products-based-on-the-search-query-matching-product-names-case-insensitive",
+      "title": "Implement client-side product filtering in the ProductsPage component that filters displayed products based on the search query matching product names (case-insensitive)",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-state-management-to-handle-the-search-query-between-the-header-component-and-productspage-component-ensuring-the-search-input-value-is-synchronized-with-the-product-filtering",
+      "title": "Add state management to handle the search query between the Header component and ProductsPage component, ensuring the search input value is synchronized with the product filtering",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-a-no-products-found-message-in-the-productspage-when-the-search-query-returns-no-matching-results",
+      "title": "Display a 'No products found' message in the ProductsPage when the search query returns no matching results",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-productspage-component-to-ensure-products-are-properly-fetched-and-rendered-on-the-main-products-page",
+      "title": "Debug and fix the ProductsPage component to ensure products are properly fetched and rendered on the main Products page",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-useproducts-react-query-hook-is-correctly-calling-the-backend-getallproducts-function-and-handling-the-response-data",
+      "title": "Verify that the useProducts React Query hook is correctly calling the backend getAllProducts function and handling the response data",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-console-logging-to-productspage-component-to-debug-data-flow-and-identify-where-products-data-is-being-lost-or-not-rendered",
+      "title": "Add console logging to ProductsPage component to debug data flow and identify where products data is being lost or not rendered",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-the-useproducts-react-query-hook-is-correctly-configured-with-proper-query-key-query-function-calling-actor-getallproducts-and-error-handling",
+      "title": "Verify the useProducts React Query hook is correctly configured with proper query key, query function calling actor.getAllProducts(), and error handling",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-detailed-console-logging-throughout-the-productspage-data-flow-to-trace-where-products-data-may-be-lost-including-raw-query-response-transformed-data-and-render-input",
+      "title": "Add detailed console logging throughout the ProductsPage data flow to trace where products data may be lost, including raw query response, transformed data, and render input",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-identify-the-specific-error-occurring-on-the-deployed-home-page-that-prevents-products-from-displaying-in-version-12",
+      "title": "Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying in Version 12",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-identified-error-in-the-productspage-component-or-useproducts-hook-that-is-preventing-products-from-rendering-on-the-main-products-page",
+      "title": "Fix the identified error in the ProductsPage component or useProducts hook that is preventing products from rendering on the main products page",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-error-boundary-or-try-catch-handling-to-the-productspage-component-to-gracefully-handle-and-display-any-runtime-errors-that-occur-during-product-fetching-or-rendering",
+      "title": "Add error boundary or try-catch handling to the ProductsPage component to gracefully handle and display any runtime errors that occur during product fetching or rendering",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -395,6 +508,58 @@
       "summary": "Debug and fix the removeFromCart backend function to ensure it properly removes products from the user's cart when called with a valid productId",
       "reqIds": [
         "REQ-39"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Update the Swapan Store brand logo in the header with a new logo image",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Create a search bar component in the header that allows users to search for products by name",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Check that the backend getAllProducts function is returning the sample product data correctly",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Inspect the ProductsPage component's data fetching and rendering logic to identify why products are not displaying, checking the useProducts hook call, data transformation, and conditional rendering logic",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Check that the backend getAllProducts function is returning products in the correct format and that the Motoko actor is properly exposing this function",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-42",
+      "summary": "Verify that the image URL mapping logic in ProductsPage correctly handles both generated image filenames and product imageUrl fields from the backend",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-45",
+      "summary": "Verify that the backend getAllProducts function returns product data in the expected format with all required fields (id, name, description, price, category, imageUrl)",
+      "reqIds": [
+        "REQ-59"
       ],
       "status": "pending"
     }

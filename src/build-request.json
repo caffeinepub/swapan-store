@@ -1,75 +1,84 @@
 {
   "kind": "build_request",
-  "title": "Fix cart removal functionality",
+  "title": "Debug and fix error preventing products from displaying on home page",
   "projectName": "Swapan Store",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-39",
-      "text": "Debug and fix the removeFromCart backend function to ensure it properly removes products from the user's cart when called with a valid productId",
+      "id": "REQ-57",
+      "text": "Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying in Version 12",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "no thir is an error"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Error message and stack trace are identified from browser console or deployment logs",
+        "Root cause of the error is determined (e.g., network request failure, data transformation issue, rendering exception)"
+      ]
+    },
+    {
+      "id": "REQ-58",
+      "text": "Fix the identified error in the ProductsPage component or useProducts hook that is preventing products from rendering on the main products page",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "no thir is an error"
+        ]
+      },
+      "acceptanceCriteria": [
+        "ProductsPage successfully fetches products from the backend without throwing errors",
+        "Products are rendered in the UI with correct images, names, prices, and add-to-cart buttons",
+        "No console errors related to product fetching or rendering appear in the deployed application"
+      ]
+    },
+    {
+      "id": "REQ-59",
+      "text": "Verify that the backend getAllProducts function returns product data in the expected format with all required fields (id, name, description, price, category, imageUrl)",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-no-it-is-not-working"
-        ],
-        "quotes": [
-          "no it is not working"
+          "msg-user-final"
         ]
       },
       "acceptanceCriteria": [
-        "The removeFromCart function successfully removes the specified product from the caller's cart",
-        "The cart data persists correctly after removal",
-        "The function handles edge cases (non-existent products, empty carts) gracefully"
+        "Backend getAllProducts function returns an array of products with all required fields",
+        "Product data matches the type signature expected by the frontend TypeScript interfaces",
+        "Sample products (masalas, groceries, food oils) are present in the returned data"
       ]
     },
     {
-      "id": "REQ-40",
-      "text": "Verify and fix the useRemoveFromCart React Query mutation hook to ensure it correctly calls the backend removeFromCart function and properly invalidates the cart query cache on success",
+      "id": "REQ-60",
+      "text": "Add error boundary or try-catch handling to the ProductsPage component to gracefully handle and display any runtime errors that occur during product fetching or rendering",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-no-it-is-not-working"
-        ],
-        "quotes": [
-          "no it is not working"
+          "msg-user-final"
         ]
       },
       "acceptanceCriteria": [
-        "The mutation hook calls the backend removeFromCart function with the correct productId",
-        "On successful removal, the cart query is invalidated and refetched",
-        "Error states are handled and displayed to the user",
-        "The UI updates immediately to reflect the removed item"
-      ]
-    },
-    {
-      "id": "REQ-41",
-      "text": "Ensure the Remove button in CartPage properly triggers the removeFromCart mutation with the correct product ID when clicked",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-no-it-is-not-working"
-        ],
-        "quotes": [
-          "no it is not working"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Clicking the Remove button calls the mutation with the correct productId",
-        "The button shows loading state during the mutation",
-        "Success feedback is provided to the user (toast notification or visual confirmation)",
-        "The cart updates to remove the item from the display"
+        "ProductsPage displays a user-friendly error message if product fetching fails",
+        "Error details are logged to console for debugging purposes",
+        "Application does not crash when errors occur in ProductsPage"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the existing backend cart data structure",
-    "Maintain the existing useActor pattern for backend calls",
-    "Preserve the current cart query invalidation strategy"
+    "Do not change the backend schema or product data structure",
+    "Preserve existing console logging for debugging purposes",
+    "Maintain compatibility with React Query hooks and TanStack Router"
   ],
   "nonGoals": [
-    "Adding undo functionality for removed items",
-    "Implementing batch removal of multiple items",
-    "Changing the visual design of the Remove button"
+    "Adding new features beyond fixing the current error",
+    "Redesigning the ProductsPage UI or layout",
+    "Modifying the search functionality or filtering logic"
   ],
   "imageRequirements": {
     "required": [],
