@@ -1,78 +1,45 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-20T00:43:47.533Z",
+  "generatedAt": "2026-02-20T00:53:46.450Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 3,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-57",
-        "summary": "Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying in Version 12",
+        "id": "REQ-61",
+        "summary": "Debug and fix the Header component to ensure the Admin navigation link is visible and clickable in the header navigation menu",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/Header.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/Header.tsx"
         ]
       },
       {
-        "id": "REQ-58",
-        "summary": "Fix the identified error in the ProductsPage component or useProducts hook that is preventing products from rendering on the main products page",
+        "id": "REQ-62",
+        "summary": "Verify that the Link component for Admin in Header.tsx has correct routing configuration and is not conditionally hidden",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/ProductCard.tsx"
+          "frontend/src/components/Header.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/ProductCard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-59",
-        "summary": "Verify that the backend getAllProducts function returns product data in the expected format with all required fields (id, name, description, price, category, imageUrl)",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-60",
-        "summary": "Add error boundary or try-catch handling to the ProductsPage component to gracefully handle and display any runtime errors that occur during product fetching or rendering",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/components/ErrorBoundary.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ProductsPage.tsx",
-          "frontend/src/components/ErrorBoundary.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/Header.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/ErrorBoundary.tsx",
-    "frontend/src/components/ProductCard.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/ProductsPage.tsx",
+    "frontend/src/components/Header.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

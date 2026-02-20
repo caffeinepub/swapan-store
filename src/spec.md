@@ -1,12 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Debug and fix the error preventing products from displaying on the home page in Version 12.
+**Goal:** Fix the Admin navigation link visibility in the header so users can access the admin dashboard.
 
 **Planned changes:**
-- Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying
-- Fix the identified error in the ProductsPage component or useProducts hook
-- Verify backend getAllProducts function returns product data in the expected format with all required fields
-- Add error boundary or try-catch handling to gracefully handle runtime errors during product fetching or rendering
+- Debug and fix the Header component to ensure the Admin link is visible and clickable
+- Verify the Admin Link component has correct routing configuration and is not conditionally hidden
+- Ensure Admin link styling matches other navigation links
 
-**User-visible outcome:** Products (masalas, groceries, food oils) display correctly on the home page without errors, with proper images, names, prices, and functional add-to-cart buttons.
+**User-visible outcome:** Users can see and click the Admin link in the header navigation menu to access the admin dashboard at /admin.

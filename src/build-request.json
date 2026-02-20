@@ -1,84 +1,50 @@
 {
   "kind": "build_request",
-  "title": "Debug and fix error preventing products from displaying on home page",
-  "projectName": "Swapan Store",
+  "title": "Fix Admin link visibility in header navigation",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-57",
-      "text": "Investigate and identify the specific error occurring on the deployed home page that prevents products from displaying in Version 12",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ],
-        "quotes": [
-          "no thir is an error"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Error message and stack trace are identified from browser console or deployment logs",
-        "Root cause of the error is determined (e.g., network request failure, data transformation issue, rendering exception)"
-      ]
-    },
-    {
-      "id": "REQ-58",
-      "text": "Fix the identified error in the ProductsPage component or useProducts hook that is preventing products from rendering on the main products page",
+      "id": "REQ-61",
+      "text": "Debug and fix the Header component to ensure the Admin navigation link is visible and clickable in the header navigation menu",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-final"
+          "msg-last"
         ],
         "quotes": [
-          "no thir is an error"
+          "i cant see the admin link"
         ]
       },
       "acceptanceCriteria": [
-        "ProductsPage successfully fetches products from the backend without throwing errors",
-        "Products are rendered in the UI with correct images, names, prices, and add-to-cart buttons",
-        "No console errors related to product fetching or rendering appear in the deployed application"
+        "Admin link is visible in the header navigation menu alongside the Products link",
+        "Admin link navigates to /admin route when clicked",
+        "Admin link styling is consistent with other navigation links in the header"
       ]
     },
     {
-      "id": "REQ-59",
-      "text": "Verify that the backend getAllProducts function returns product data in the expected format with all required fields (id, name, description, price, category, imageUrl)",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend getAllProducts function returns an array of products with all required fields",
-        "Product data matches the type signature expected by the frontend TypeScript interfaces",
-        "Sample products (masalas, groceries, food oils) are present in the returned data"
-      ]
-    },
-    {
-      "id": "REQ-60",
-      "text": "Add error boundary or try-catch handling to the ProductsPage component to gracefully handle and display any runtime errors that occur during product fetching or rendering",
+      "id": "REQ-62",
+      "text": "Verify that the Link component for Admin in Header.tsx has correct routing configuration and is not conditionally hidden",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-final"
+          "msg-last"
         ]
       },
       "acceptanceCriteria": [
-        "ProductsPage displays a user-friendly error message if product fetching fails",
-        "Error details are logged to console for debugging purposes",
-        "Application does not crash when errors occur in ProductsPage"
+        "Admin Link component exists in the Header component JSX",
+        "Admin Link has correct 'to' prop pointing to /admin route",
+        "No conditional rendering logic is hiding the Admin link from users"
       ]
     }
   ],
   "constraints": [
-    "Do not change the backend schema or product data structure",
-    "Preserve existing console logging for debugging purposes",
-    "Maintain compatibility with React Query hooks and TanStack Router"
+    "Do not modify the authentication flow for the admin dashboard",
+    "Keep the Admin link in the same navigation section as the Products link"
   ],
   "nonGoals": [
-    "Adding new features beyond fixing the current error",
-    "Redesigning the ProductsPage UI or layout",
-    "Modifying the search functionality or filtering logic"
+    "Changing the admin authentication password",
+    "Modifying the admin dashboard layout or functionality",
+    "Adding additional navigation links beyond fixing the Admin link"
   ],
   "imageRequirements": {
     "required": [],

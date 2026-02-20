@@ -47,16 +47,16 @@ export default function Header({ searchQuery = '', onSearchChange }: HeaderProps
           </div>
         )}
 
-        <nav className="flex items-center gap-4 shrink-0">
+        <nav className="flex items-center gap-2 sm:gap-4 shrink-0">
           <Link
             to="/"
-            className="text-sm font-medium text-foreground transition-colors hover:text-primary hidden md:inline"
+            className="text-sm font-medium text-foreground transition-colors hover:text-primary"
           >
             Products
           </Link>
           <Link
             to="/admin"
-            className={`text-sm font-medium transition-colors hover:text-primary hidden md:inline ${
+            className={`text-sm font-medium transition-colors hover:text-primary ${
               isAdminActive ? 'text-primary' : 'text-foreground'
             }`}
           >

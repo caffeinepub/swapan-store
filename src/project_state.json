@@ -1,11 +1,12 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 27,
+  "projectStateVersion": 29,
   "summary": "E-commerce app for Swapan Store selling Indian masalas, groceries, and food oils",
   "architectural_notes": [],
   "known_issues": [
     "Products not displaying on the main Products page in the deployed application",
-    "Error encountered when attempting to view products on the deployed home page in Version 12"
+    "Error encountered when attempting to view products on the deployed home page in Version 12",
+    "Admin navigation link is not visible in the header menu"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -336,6 +337,22 @@
         "REQ-60"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-header-component-to-ensure-the-admin-navigation-link-is-visible-and-clickable-in-the-header-navigation-menu",
+      "title": "Debug and fix the Header component to ensure the Admin navigation link is visible and clickable in the header navigation menu",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-link-component-for-admin-in-header-tsx-has-correct-routing-configuration-and-is-not-conditionally-hidden",
+      "title": "Verify that the Link component for Admin in Header.tsx has correct routing configuration and is not conditionally hidden",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -561,6 +578,12 @@
       "reqIds": [
         "REQ-59"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-46",
+      "summary": "Debug and fix the Admin navigation link visibility in the header navigation menu",
+      "reqIds": [],
       "status": "pending"
     }
   ],
